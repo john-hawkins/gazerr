@@ -3,20 +3,16 @@ import argparse
 import sys
 import os
 
+from .estimate import calculate_interval
+
 ####################################################################################
 def load_calibration_data(input_path):
     df = pd.read_csv(input_path, low_memory=False)
     return df
 
 ####################################################################################
-def run_simulation(df):
-    results = pd.DataFrame()
-    locations = ["Banner Top", "Banner Bottom", "Banner Centre"]
-    for loc in locations:
-       record = {}
-       record['Location'] = loc
-       record['Error'] = 20
-       results.append(record, ignore_index=True)
+def run_simulation(df, measure, session, position):
+    results = calculate_interval(df, measure, session, position)
     return results
 
 ####################################################################################
@@ -27,22 +23,22 @@ def main():
     parser.add_argument('calibration_data',
                        metavar='calibration_data',
                        type=str,
-                       help='Path to the model calibration data contains targets and gaze coords')
+                       help='Path to the model calibration data contains targets and gaze coords - Requires columns [target_x, target_y, gaze_x, gaze_y]')
 
     parser.add_argument('measurement',
                        metavar='measurement',
                        type=float,
-                       help='Measured gaze duration.')
+                       help='Measured gaze duration [for which we want error bounds].')
 
     parser.add_argument('session_length',
                        metavar='session_length',
                        type=float,
-                       help='Measured gaze duration.')
+                       help='Length of total viewing session [Max in principle gaze duration]')
 
     parser.add_argument('ad_position',
                        metavar='ad_position',
                        type=str,
-                       help='Position of the ad in the viewport: top | mid | bottom')
+                       help='Position of the ad in the viewport. Values: top | mid | bot')
     parser.add_argument('output',
                        metavar='output',
                        type=str,
@@ -67,21 +63,8 @@ def main():
         print("    Use -f [--force] to force an overwrite over the file")
 
     df = load_calibration_data(data)
-    result = run_simulation(df)
+    result = run_simulation(df, measure, session, position)
     result.to_csv(output, index=False, header=True)
-
-#############################################################
-def print_usage(args):
-    """ Command line application usage instructions. """
-    print("USAGE ")
-    print(args[0], " <VALIDATION DATASET> <MEASUREMENT> <SESSION LENGTH> <AD POSITION> <OUTPUT>")
-    print(" <VALIDATION DATASET> - Supported file types: csv")
-    print(" <MEASUREMENT> - Measured gaze duration (seconds)")
-    print(" <SESSION LENGTH> - Length of the media viewing session (seconds)")
-    print(" <AD POSITION> - Position in the viewport of the ad unit (top|mid|bottom)")
-    print(" <OUTPUT> - Output path to write the results file")
-    print("")
-
 
 ##########################################################################################
 if __name__ == '__main__':
