@@ -1,24 +1,24 @@
 # Gaze Duration Error
 
-The purpose of this repository is to develop a methodology for estimating
-the amount of error in a gaze duration measurement derived from an point 
-of gaze model.
+Gazerr is an application for estimating the expected error in a gaze duration
+measurement derived from repeated application of a point of gaze model.
 
-The system requires an input dataset of calibration points from the point
-of gaze predictive model. This data is used to generate a probability 
-distribution of true and false fixation events within pre-specified screen
-regions.
-
-These distributions are then used to run Monte-Carlo simualtions to estimate
-the error distribution over gaze duration measurements. The user specifies
-the parameter of the simulation and receives calibration bounds on gaze duration
-estimations.
-
+The method requires an input dataset of validation points from the point
+of gaze predictive model. This data is used to generate the probability 
+distribution of true gaze durations given a measured gaze duration.
 
 ### Usage
 
 ```
 gazerr <CALIBRATION FILE> <SESSION LENGTH> <TRUE GAZE DURATION>
 ```
+
+### Documentation
+
+Intending to submit to this conference
+http://asyu.inista.org/?language=EN#:~:text=The%20Innovations%20in%20Intelligent%20Systems,will%20be%20English%20and%20Turkish.
+
+
+
 
 

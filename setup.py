@@ -14,7 +14,7 @@ setup(
     name = "gazerr",
     packages = ["gazerr"],
     license = "MIT",
-    install_requires = ['numpy', 'pyyaml', 'pandas', 'fpdf'],
+    install_requires = ['numpy', 'pandas'],
     entry_points = {
         "console_scripts": ['gazerr = gazerr.cli:main']
     },

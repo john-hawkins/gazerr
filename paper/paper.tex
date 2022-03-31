@@ -1,0 +1,182 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amscd}
+\usepackage{booktabs}
+\usepackage[latin2]{inputenc}
+\usepackage{t1enc}
+\usepackage[mathscr]{eucal}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{graphics}
+\numberwithin{equation}{section}
+\usepackage{hyperref}
+\usepackage[margin=2.9cm]{geometry}
+\usepackage[outdir=./images/]{epstopdf}
+\epstopdfsetup{outdir=./images/}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+
+\def\numset#1{{\\mathbb #1}}
+
+\begin{document}
+ 
+\title{Estimating Gaze Duration Error Distributions from Eye Tracking Data}
+
+\author{
+John Hawkins \\ email \href{mailto:john.hawkins@playgroundxyz.com}{john.hawkins@playgroundxyz.com} \\
+} 
+
+\maketitle
+
+\section{Abstract}
+
+Eye tracking applications produce a series of gaze fixation points that can be attributed to
+objects within a subjects field of vision. Error is typically measured on the basis of individual
+gaze fixation measurements. However, often these applications are used to infer a gaze duration
+metric from a series of fixation measurements. In this work we deliver an open source application
+that estimates the error distribution of gaze duration estimates from an eye tracking validation
+log file.
+
+
+\section{Introduction}
+
+Eye tracking applications are an important technology that permit the development of a wide 
+variety of new forms of software interaction, as well as a tool for empirical investigations 
+into human thought and behaviour. Eye tracking studies are widely used as a method of 
+measuring overt attention to visual stimuli and have been applied to study the extent to 
+which people look at, and remember, advertising \cite{Hervet2011}.
+The technology has also allowed the study of many factors that contribute to effective advertising,
+including the impact of images of faces \cite{Djamasbi2010},
+the use of animation \cite{Hamborg2012} and the relationship with
+social media posts \cite{Barreto2013}.
+
+Increasingly, eye tracking applications are built using machine learning models trained on 
+data sets containing combinations of facial images and fixation coordinates collected 
+through careful application design. The resulting gaze fixation prediction model can 
+then be applied sequentially to determine how long a subject fixated on a given object.
+Thus, gaze duration is derived from aggregation of gaze fixation.
+
+Gaze fixation models will typically have an error profile that is dependent on both 
+the nature of the media being presented, the variety of faces and lighting conditions 
+in the training data. In addition, it has been observed that the error profile varies 
+depending on the location of the true fixation point.
+
+When fixation models are used sequentially for the purpose of estimating gaze duration 
+(as is done in advertising media studies), then there is the potential for the error 
+to either cancel out (reducing error in gaze duration estimation) or to compound 
+(increasing error in gaze duration). Which of these outcomes occurs will depend on the 
+specific of the model and the conditions under which it is being used.
+Influencing factors include the ratio of true positives to true negatives in the data, 
+and the error profile of the machine learning fixation coordinate model. 
+Heretofore, gaze duration models have assumed the former situation, if indeed the possibility of error in gaze duration is even considered.
+
+In this work we develop a methodology for estimating session specific error profiles that relies on an empirical error profile of the underlying fixation model. The method allows us to profile whether an individual session has a compounding or cancelling error profile, and put empirical confidence bounds on the gaze duration estimates.
+
+\section{Methodology}
+
+We estimate the gaze duration measurement error through Monte Carlo simulation
+on the basis of the gaze fixation errors on the validation data from eye tracking
+fixation model. This error profile can be stratified into a grid across the screen dimensions. For each of these grid locations we calculate two error probabilities, the false negative probability (when true fixation is on the grid and the model produces coordinates outside the grid. And the false positive probability, when the true fixation is outside the grid location and the model produces a prediction inside the grid square.
+
+We apply this grid of error probabilities in a Monte Carlo simulation that requires the following inputs:
+1.	The grid coordinates in which the item of concern is located.
+2.	The duration of true fixation on that item
+3.	The duration of the entire session of measurement.
+The Monte Carlo process will then repeatedly simulate sessions of the given length and gaze duration. Each simulation will use the error profiles to produce a potential model output. Collectively these estimates model outputs constitute a probability distribution over outputs for the given scenario.
+
+\subsection{Measurement Distribution}
+
+In the first stage of the methodology we provide an estimation of the distribution of 
+measurements for a given true gaze duration. These distributions are produced at multiple locations
+across the screen, so that we have a set of distributions, that captures the expected
+variation in measurement depending on the length of and locus of true fixation.
+
+We want to estimate a the probability distribution over measured durations $\hat{d}$ given a
+known duration $d$, the session length $s$ and the ad location $l$. 
+We express this distribution as $P(\hat{d}|d,l,s)$. The
+procedure for making this estimation involves iteratively generating random samples
+of gaze fixation paths $\mathcal{F}$ consistent with the parameters $d$, $s$ and $l$. 
+For each point $f$ in $\mathcal{F}$ we determine a measurement point $\hat{f}$ 
+by drawing samples from the eye tracking validation set. 
+These points determine the $\delta_x$ and $\delta_y$ error in the measurement
+of gaze fixation point $f$. We draw these coordinates from the validation file such the
+the probability of the point being chosen is propotional to the distance of its target
+$x$ and $y$ from the coordinates of the point $f$ in the generated path. The complete algorithm
+for estimating $P(\hat{d}|d,l,s)$ is shown in Algorithm \ref{alg:p_of_dhat}    
+
+\begin{algorithm}
+\caption{Estimation of $P(\hat{d}|d,l,s)$}\label{alg:p_of_dhat}
+\begin{algorithmic}
+  \Require $\hat{d},l,s,C$
+  \Ensure $P(\hat{d}|d,l,s)$
+  \State $N \gets 2000$
+  \State $D \gets floor(s \times 10)$ \Comment{Durations sampled at 100ms intervals}
+  \State $P \gets Array(D+1,D+1)$ \Comment{Result is a 2 dimensional array}
+  \If{$\hat{d} > s$}
+    \State error
+  \EndIf
+  \For{$d \in 0 to D$} \Comment{Iterate over all D+1 possible durations}
+    \For{$n \in 1 to N$} \Comment{Collect N samples}
+      \State $p \gets generatePath(d,l,s)$
+      \State $d_e \gets generateMeasurement(p,C)$  
+      \State $P[d,d_e] += 1/2000$  
+    \EndFor
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+The bulk of the work is done by two functions inside the simulation loop. The first function
+$generatePath(d,l,s)$ takes a true gaze duration, position of ad and viewing session length and
+generates a path of fixation points compatible with those parameters. The second function 
+$generateMeasurement(p,C)$, takes the path and the eye tracking calibration data and produces
+an sample of measured attention time. Repeated application of this process over different 
+values of $d$ allows us to populate a two dimensional array where the first dimension is the
+true duration and the second the estimated. Note: that our probability distribution is discrete
+because we restrict ourselves to sampling every 100ms point between zero and the session length.
+
+\subsection{Gaze Duration Distribution}
+
+In real world applications we will have the true session length but rely on the model for the 
+estimate of gaze duration. Meaning that the probability distribution we want is the distribution 
+over true gaze durations for a given measurement, rather than the inverse which is what we 
+have produced in the previous section. We produce an estimate of $P(d|\hat{d},l,s)$
+through an application of Bayes' rule, as shown in Equation \ref{eq:p_of_d}.
+
+\begin{equation}
+\label{eq:p_of_d}
+P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ P(\hat{d},l,s)  }
+\end{equation}
+
+We use a uniform prior for $P(d)$, meaning in the absence of additional information all
+gaze durations less than the session length are equally likely. As our distributions are
+discrete estimations of an underlying continuous distribution the value of $P(d)$ is
+equal to $1/(1+floor(10*s))$
+ We can estimate the value
+of the denominator $P(\hat{d},l,s)$ by iterating over all values of d and summing the product
+of $ P(\hat{d},l,s|d) \dot P(d)$. This fully explicated form is shown in 
+Equation \ref{eq:p_of_d_full}.
+
+\begin{equation}
+\label{eq:p_of_d_full}
+P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ \sum_{\delta \in D} P(\hat{d},l,s|\delta) \dot P(\delta)  }
+\end{equation}
+
+
+\section{Results}
+
+
+\section{Conclusion}
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}
