@@ -68,16 +68,30 @@ the nature of the media being presented, the variety of faces and lighting condi
 in the training data. In addition, it has been observed that the error profile varies 
 depending on the location of the true fixation point.
 
-When fixation models are used sequentially for the purpose of estimating gaze duration 
-(as is done in advertising media studies), then there is the potential for the error 
-to either cancel out (reducing error in gaze duration estimation) or to compound 
-(increasing error in gaze duration). Which of these outcomes occurs will depend on the 
+When fixation models are used sequentially for the purpose of estimating gaze duration
+(as is done in advertising media studies), then there is the potential for the error
+to either cancel out (reducing error in gaze duration estimation) or to compound
+(increasing error in gaze duration). Which of these outcomes occurs will depend on the
 specific of the model and the conditions under which it is being used.
-Influencing factors include the ratio of true positives to true negatives in the data, 
-and the error profile of the machine learning fixation coordinate model. 
-Heretofore, gaze duration models have assumed the former situation, if indeed the possibility of error in gaze duration is even considered.
+Influencing factors include the ratio of true positives to true negatives in the data,
+and the error profile of the machine learning fixation coordinate model.
 
-In this work we develop a methodology for estimating session specific error profiles that relies on an empirical error profile of the underlying fixation model. The method allows us to profile whether an individual session has a compounding or cancelling error profile, and put empirical confidence bounds on the gaze duration estimates.
+The errors of eye tracking data technology can be decomposed into a range of
+independent sources that researchers need to consider \cite{Holmqvist2012}.
+Unless they are properly address these sources of error can manifest themselves
+as systematic biases across undesirable dimensions such as the age\cite{Dalrymple2018}
+or ethnicity of subjects\cite{Blignaut2013}. 
+
+The use of eye fixation models to estimate gaze duration (or dwell time) in Area of
+Interest studies (AOI) was discussed by Holmqvist et al. \cite{Holmqvist2012}. The
+authors simulated the impact of gaze fixation error by adding noise accoridng to
+manufacturer specifications to data sets of low margin areas of interest. We extend 
+this idea to calculate probabilistic bounds on the error in gaze duration using
+calibration data as a source of noise distribution that is specific to both the
+study participants and the device/environment of the study. The result is an open
+source application that may be used by a wide variety of reserachers to provide
+error bounds on any gaze duration measurements.
+
 
 \section{Methodology}
 

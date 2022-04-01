@@ -1,0 +1,27 @@
+
+ 
+ 
+A study of error in eye tracking that generates evaluation data sets and
+compares them with manufacturer error bounds. The authors find that the error 
+for audult subjects is generally within bounds, but for children and especially
+toddlers the error rates tend to be much higher \cite{Dalrymple2018}.
+
+
+
+The errors of eye tracking data technology can be decomposed into a range of
+independent sources that researchers need to consider \cite{Holmqvist2012}. 
+Unless they are properly address these sources of error can manifest themselves
+as systematic biases across undesirable dimensions such as the age\cite{Dalrymple2018} 
+or ethnicity of subjects\cite{{Blignaut2013}.
+
+The use of eye fixation models to estimate gaze duration (or dwell time) in Area of
+Interest studies (AOI) was discussed by Holmqvist et al. \cite{Holmqvist2012}. The
+authors simulated the impact of gaze fixation error by adding noise accoridng to
+manufacturer specifications to data sets of low margin areas of interest. We extend 
+this idea to calculate probabilistic bounds on the error in gaze duration using
+calibration data as a source of noise distribution that is specific to both the
+study participants and the device/environment of the study. The result is an open
+source application that may be used by a wide variety of reserachers to provide
+error bounds on any gaze duration measurements.
+
+
