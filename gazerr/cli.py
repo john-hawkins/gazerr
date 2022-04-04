@@ -11,8 +11,29 @@ def load_calibration_data(input_path):
     return df
 
 ####################################################################################
-def run_simulation(df, measure, session, position):
-    results = calculate_interval(df, measure, session, position)
+def run_simulation(df, measure, session, top_left, bot_right):
+    top = top_left.split(",")
+    bot = bot_right.split(",")
+    if len(top) != 2:
+        print("TOP LEFT COORDINATES MUST BE A COMMA SEPARATED PAIR OF INTEGERS")
+        exit(1)
+    if len(bot) != 2:
+        print("BOTTOM RIGHT COORDINATES MUST BE A COMMA SEPARATED PAIR OF INTEGERS")
+        exit(1)
+    try:
+        tlx = int(top[0]) 
+        tly = int(top[1])
+    except:
+        print("TOP LEFT COORDINATES MUST BE A COMMA SEPARATED PAIR OF INTEGERS")
+        exit(1)
+    try:
+        brx = int(bot[0]) 
+        bry = int(bot[1])
+    except:
+        print("BOTTOM RIGHT COORDINATES MUST BE A COMMA SEPARATED PAIR OF INTEGERS")
+        exit(1)
+
+    results = calculate_interval(df, measure, session, tlx, tly, brx, bry)
     return results
 
 ####################################################################################
