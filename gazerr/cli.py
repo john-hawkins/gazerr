@@ -35,36 +35,31 @@ def main():
                        type=float,
                        help='Length of total viewing session [Max in principle gaze duration]')
 
-    parser.add_argument('ad_position',
-                       metavar='ad_position',
+    parser.add_argument('target_top_left',
+                       metavar='target_top_left',
                        type=str,
-                       help='Position of the ad in the viewport. Values: top | mid | bot')
-    parser.add_argument('output',
-                       metavar='output',
+                       help='X,Y Position for top left of target bounding box.')
+
+    parser.add_argument('target_bottom_right',
+                       metavar='target_bottom_right',
                        type=str,
-                       help='Path to output file location.')
- 
-    parser.add_argument('-f', '--force', action="store_true", help="Force the output overwrite.")
+                       help='X,Y Position for bottom right of target bounding box.')
+
     args = parser.parse_args()
     data = args.calibration_data
     measure = args.measurement
     session = args.session_length
-    position = args.ad_position
-    output = args.output
+    top_left = args.target_top_left
+    bottom_right = args.target_bottom_right
 
     if not os.path.isfile(data):
         print(" ERROR")
         print(" The input file '%s' does not exist" % data)
         sys.exit()
 
-    if os.path.isfile(output) and not args.force:
-        print(" ERROR")
-        print(" The output file '%s' already exists."% output)
-        print("    Use -f [--force] to force an overwrite over the file")
-
     df = load_calibration_data(data)
-    result = run_simulation(df, measure, session, position)
-    result.to_csv(output, index=False, header=True)
+    result = run_simulation(df, measure, session, top_left, bottom_right)
+    print(result)
 
 ##########################################################################################
 if __name__ == '__main__':
