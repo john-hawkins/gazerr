@@ -26,9 +26,12 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     session = round(float(session))
 
     N = 2000
+    inc = 1/N
     D = math.floor(session / 10)
     G = math.floor(measure / 10)
-    P = P = np.ndarray([D+1,D+1])
+    P = np.ndarray([D+1,D+1])
+    top_l = (top_l_x, top_l_y)
+    bot_r = (bot_r_x, bot_r_y)
 
     max_X, max_y = extract_screen_limits(df, bot_r_x, bot_r_y)
 
@@ -47,18 +50,25 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
 
     noise = x_err.copy()
     noise['err_y'] = y_err['err_y']
+
     def apply_measurement_noise(point):
        """ Use the calibration data to add noise to the path point """
-       
+       temp = noise.copy()
+       temp['distance'] = temp['ref'].apply(lambda r: euclidean(point, r))
+       temp.sort_values('distance', inplace=True)
+       recs = len(temp.loc[0,:]['err_x'])
+       rn = random.randrange(0,recs)
+       return (point[0] + temp.loc[0,:]['err_x'][rn], point[1] + temp.loc[0,:]['err_y'][rn])
 
-
-    for n in range(0,N):
-        in_path = get_path(G, top_l_x, top_l_y, bot_r_x, bot_r_y)
-        out_path = get_path(D-G, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
-        path = in_path + out_path
-        measured_path = [apply_measurement_noise(point) for point in path] 
-
-
+    for d in range(0,D+1):
+        for n in range(0,N):
+            in_path = get_path(d, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            out_path = get_path(D-d, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            path = in_path + out_path
+            measured_path = [apply_measurement_noise(point) for point in path] 
+            insiders = [int(inside(p,top_l,bot_r)) for p in measured_path]
+            dhat = sum(insiders)
+            P[d,dhat] += inc    
 
     result = pd.DataFrame({"Level":[95,90,80], "Lower":[100,140,180], "Upper":[340,390,450]})
     return result
@@ -104,8 +114,9 @@ def point_inside(temp_x, temp_y, exc_l_x, exc_l_y, exc_r_x, exc_r_y):
         return False
 
 
-
-
+###########################################################
+def inside(point, top_l, bot_r):
+    retrun point_inside( point[0], point[1], top_l[0], top_l[1], bot_r[0], bot_r[1])
 
 
 
