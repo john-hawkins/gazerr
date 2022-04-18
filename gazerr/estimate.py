@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 import math
 
 def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y):
@@ -14,7 +15,7 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     Returns: A series of probabilistic error bounds
     """
 
-    if df.columns != ['target_x','target_y','gaze_x','gaze_y']:
+    if not (df.columns == ['target_x','target_y','gaze_x','gaze_y']).all():
         msg = 'Calibration data must consist of columns: target_x, target_y, gaze_x, gaze_y'
         raise Exception('InvalidRequest', msg)
 
@@ -25,10 +26,10 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     measure = round(float(measure))
     session = round(float(session))
 
-    N = 2000
+    N = 100
     inc = 1/N
-    D = math.floor(session / 10)
-    G = math.floor(measure / 10)
+    D = math.floor(session / 100)
+    G = math.floor(measure / 100)
     P = np.ndarray([D+1,D+1])
     top_l = (top_l_x, top_l_y)
     bot_r = (bot_r_x, bot_r_y)
@@ -70,7 +71,30 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
             dhat = sum(insiders)
             P[d,dhat] += inc    
 
-    result = pd.DataFrame({"Level":[95,90,80], "Lower":[100,140,180], "Upper":[340,390,450]})
+    # At this point in the algorithm we have a set of probability distributions over dhat
+    # for a range of potential values of true gaze duration: d
+
+    # As an intermediate step for testing, lets return distrubution around measurement = d
+    result = extract_intervals(P[G,:], [0.95,0.90,0.80] )
+
+    return result
+
+###########################################################
+def extract_intervals(dist, intervals, increment=100):
+    cumulative = 0
+    lowers = intervals.copy() 
+    uppers = intervals.copy() 
+    time = 0
+    for t in range(dist.shape[0]):
+        cumulative = cumulative + dist[t]
+        for i in range(len(intervals)):
+            if cumulative < (1 - intervals[i]):
+                lowers[i] = time
+            if cumulative < intervals[i]:
+                uppers[i] = time
+        time = time + increment
+
+    result = pd.DataFrame({"Level":intervals, "Lower":lowers, "Upper":uppers})
     return result
 
 ###########################################################
@@ -108,7 +132,7 @@ def get_path(n, l_x, l_y, r_x, r_y, exc_l_x=-1,exc_l_y=-1,exc_r_x=-1,exc_r_y=-1)
  
 ###########################################################
 def point_inside(temp_x, temp_y, exc_l_x, exc_l_y, exc_r_x, exc_r_y):
-    if temp_x >= exc_l_x & temp_x <= exc_r_x & temp_y >= exc_l_y & temp_y <= exc_r_y:
+    if (temp_x >= exc_l_x) & (temp_x <= exc_r_x) & (temp_y >= exc_l_y) & (temp_y <= exc_r_y):
         return True
     else:
         return False
@@ -116,7 +140,7 @@ def point_inside(temp_x, temp_y, exc_l_x, exc_l_y, exc_r_x, exc_r_y):
 
 ###########################################################
 def inside(point, top_l, bot_r):
-    retrun point_inside( point[0], point[1], top_l[0], top_l[1], bot_r[0], bot_r[1])
+    return point_inside( point[0], point[1], top_l[0], top_l[1], bot_r[0], bot_r[1])
 
 
 
