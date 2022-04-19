@@ -25,12 +25,12 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     # Force measure and session to be rounded integers
     measure = round(float(measure))
     session = round(float(session))
-
-    N = 100
+    increment = 25
+    N = 600
     inc = 1/N
-    D = math.floor(session / 100)
-    G = math.floor(measure / 100)
-    P = np.ndarray([D+1,D+1])
+    D = math.floor(session / increment) + 1
+    G = math.floor(measure / increment) + 1
+    P = np.zeros([D,D])
     top_l = (top_l_x, top_l_y)
     bot_r = (bot_r_x, bot_r_y)
 
@@ -61,10 +61,10 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
        rn = random.randrange(0,recs)
        return (point[0] + temp.loc[0,:]['err_x'][rn], point[1] + temp.loc[0,:]['err_y'][rn])
 
-    for d in range(0,D+1):
+    for d in range(0,D):
         for n in range(0,N):
             in_path = get_path(d, top_l_x, top_l_y, bot_r_x, bot_r_y)
-            out_path = get_path(D-d, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            out_path = get_path(D-d-1, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
             path = in_path + out_path
             measured_path = [apply_measurement_noise(point) for point in path] 
             insiders = [int(inside(p,top_l,bot_r)) for p in measured_path]
@@ -75,12 +75,14 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     # for a range of potential values of true gaze duration: d
 
     # As an intermediate step for testing, lets return distrubution around measurement = d
-    result = extract_intervals(P[G,:], [0.95,0.90,0.80] )
+    result = extract_intervals(P[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
 
+    #print(P[G,:])
+    #print("Total Probability:", P[G,:].sum())
     return result
 
 ###########################################################
-def extract_intervals(dist, intervals, increment=100):
+def extract_intervals(dist, intervals, increment):
     cumulative = 0
     lowers = intervals.copy() 
     uppers = intervals.copy() 
