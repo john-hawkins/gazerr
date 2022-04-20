@@ -57,9 +57,17 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
        temp = noise.copy()
        temp['distance'] = temp['ref'].apply(lambda r: euclidean(point, r))
        temp.sort_values('distance', inplace=True)
-       recs = len(temp.loc[0,:]['err_x'])
+       top1 = temp.loc[0,:]['distance']
+       top2 = temp.loc[1,:]['distance']
+       threshold = top2/(top1+top2)
+       if random.uniform(0,1) < threshold:
+           noise_set = temp.loc[0,:]
+       else:
+           noise_set = temp.loc[1,:]
+       recs = len(noise_set['err_x'])
        rn = random.randrange(0,recs)
-       return (point[0] + temp.loc[0,:]['err_x'][rn], point[1] + temp.loc[0,:]['err_y'][rn])
+       return (point[0] + noise_set['err_x'][rn], point[1] + noise_set['err_y'][rn])
+
 
     for d in range(0,D):
         for n in range(0,N):
