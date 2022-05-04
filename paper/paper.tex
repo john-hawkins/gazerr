@@ -38,24 +38,31 @@ John Hawkins \\ email \href{mailto:john.hawkins@playgroundxyz.com}{john.hawkins@
 \section{Abstract}
 
 Eye tracking applications produce a series of gaze fixation points that can be attributed to
-objects within a subjects field of vision. Error is typically measured on the basis of individual
-gaze fixation measurements. However, often these applications are used to infer a gaze duration
-metric from a series of fixation measurements. In this work we deliver an open source application
-that estimates the error distribution of gaze duration estimates from an eye tracking validation
-log file.
-
+objects within a subject's field of vision. Error is typically measured on the basis of individual
+gaze fixation point measurements. However, often these applications are used to infer a gaze duration
+metric from a series of fixation measurements. In this work we develop an algorithm for estimating
+the error bounds on gaze duration measurement through monte carlo simualtion based on the content
+of an eye tracking validation log file. We provide this algorithm as an open source application
+that allows for robust estimates of the error distribution of gaze duration measurements. 
+We use this application to conduct experiments on the expected error bounds for different duration
+measurements across a range of session lengths and area of interest positions within the viewport
+of mobile devices. The results indicate...
 
 \section{Introduction}
 
-Eye tracking applications are an important technology that permit the development of a wide 
-variety of new forms of software interaction, as well as a tool for empirical investigations 
-into human thought and behaviour. Eye tracking studies are widely used as a method of 
-measuring overt attention to visual stimuli and have been applied to study the extent to 
-which people look at, and remember, advertising \cite{Hervet2011}.
-The technology has also allowed the study of many factors that contribute to effective advertising,
-including the impact of images of faces \cite{Djamasbi2010},
-the use of animation \cite{Hamborg2012} and the relationship with
-social media posts \cite{Barreto2013}.
+Eye tracking is an important technology with a wide variety of applications. It permits evaluation
+of software user interfaces\cite{Harezlak2015}, the development of new forms of software interaction, as well as a potential method of biometric identification\cite{Kasprowski2018}. 
+Eye tracking has become a core tool for empirical investigations 
+into human behaviour and is widely used as a method of measuring explicit attention to visual stimuli. 
+It has been applied to study psychological phenomena ranging from cognition\cite{Brunye2019}
+to mental health\cite{Duque2014,Rudich-Strassler2022}, and is now routinely used to evaluate 
+advertising \cite{Hervet2011}. Eye tracking technology has allowed the marketing researchers 
+to study many factors that contribute to effective advertising, 
+including brand recall \cite{Wedel2000},
+the capture and tranfer of attention \cite{Pieters2004}, 
+the impact of images of faces \cite{Djamasbi2010},
+the attention effects of animation \cite{Hamborg2012},
+and the relationship with social media posts \cite{Barreto2013}.
 
 Increasingly, eye tracking applications are built using machine learning models trained on 
 data sets containing combinations of facial images and fixation coordinates collected 
@@ -66,7 +73,11 @@ Thus, gaze duration is derived from aggregation of gaze fixation.
 Gaze fixation models will typically have an error profile that is dependent on both 
 the nature of the media being presented, the variety of faces and lighting conditions 
 in the training data. In addition, it has been observed that the error profile varies 
-depending on the location of the true fixation point.
+depending on the location of the true fixation point within the subjects field of view.
+The errors in fixation point measurement for a given eye tracking solution are routinely
+adjusted through a process called calibration. Improvements in the callibration process
+are an ongoing focus for the development of algorithms\cite{Zhang2014,Hassoumi2019} 
+and software tools\cite{ETCAL2018} 
 
 When fixation models are used sequentially for the purpose of estimating gaze duration
 (as is done in advertising media studies), then there is the potential for the error
@@ -103,6 +114,7 @@ We apply this grid of error probabilities in a Monte Carlo simulation that requi
 1.	The grid coordinates in which the item of concern is located.
 2.	The duration of true fixation on that item
 3.	The duration of the entire session of measurement.
+
 The Monte Carlo process will then repeatedly simulate sessions of the given length and gaze duration. Each simulation will use the error profiles to produce a potential model output. Collectively these estimates model outputs constitute a probability distribution over outputs for the given scenario.
 
 \subsection{Measurement Distribution}
@@ -183,12 +195,31 @@ Equation \ref{eq:p_of_d_full}.
 P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ \sum_{\delta \in D} P(\hat{d},l,s|\delta) \dot P(\delta)  }
 \end{equation}
 
+\subsection{Experiments}
+
+We evaluate the methodology by conducting experiments over a range of AOI positions and session
+lengths. The goal of which is to understand changes in the expected error profile of 
+visual attention measurement when the object position varies and under variations in the
+length of time that a subject is tracked.
+
+In both instances we use an identical validation dataset generated from a panel of 15 users
+engaged in a validation task after calibration with the SeeSo eye tracking software on mobile
+devices. In these experiments we have used all validation data as single source of error 
+estimation, but in principle these experiments could be conducted on a per user basis.
 
 \section{Results}
+
+We show all experimental results in Figure \ref{fig:plots}. The top series corresponds
+to experiments where the AOI is the top third of the viewport, the middle and bottom 
+series correspond to their respective thirds of the viewport. In each plot we show
+data for a specific session length ranging from 10 to 30 seconds, where the x axis
+depicts the measured gaze duration and the y-axis shows the confidence range for the
+true gaze duration.  
 
 
 \section{Conclusion}
 
+Not sure yet.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
