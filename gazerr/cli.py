@@ -49,12 +49,12 @@ def main():
     parser.add_argument('measurement',
                        metavar='measurement',
                        type=float,
-                       help='Measured gaze duration [for which we want error bounds].')
+                       help='Measured gaze duration (in milliseconds) [for which we want error bounds].')
 
     parser.add_argument('session_length',
                        metavar='session_length',
                        type=float,
-                       help='Length of total viewing session [Max in principle gaze duration]')
+                       help='Length of total viewing session (in milliseconds) [Max in principle gaze duration]')
 
     parser.add_argument('target_top_left',
                        metavar='target_top_left',

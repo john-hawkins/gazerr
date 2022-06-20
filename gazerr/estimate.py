@@ -8,8 +8,8 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     Calculate error bounds on a gaze duration measurement.
     Params
     * df: A dataframe of eye tracking calibration data
-    * measure: A gaze duration measurement
-    * session: The eye tracking session length
+    * measure: A gaze duration measurement (in milliseconds)
+    * session: The eye tracking session length (in milliseconds)
     * top_l_x, top_l_y, bot_r_x, bot_r_y : Top left and bottom right coordinates of target.
     
     Returns: A series of probabilistic error bounds
@@ -25,11 +25,12 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     # Force measure and session to be rounded integers
     measure = round(float(measure))
     session = round(float(session))
-    increment = 25
-    N = 600
+    increment = 100
+    N = 1000
     inc = 1/N
     D = math.floor(session / increment) + 1
     G = math.floor(measure / increment) + 1
+    prior = 1/D
     P = np.zeros([D,D])
     top_l = (top_l_x, top_l_y)
     bot_r = (bot_r_x, bot_r_y)
@@ -79,15 +80,45 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
             dhat = sum(insiders)
             P[d,dhat] += inc    
 
-    # At this point in the algorithm we have a set of probability distributions over dhat
-    # for a range of potential values of true gaze duration: d
+    # #######################################################################################
+    # At this point in the algorithm we have a set of probability distributions over
+    # the measured duration (dhat) for a range of potential values of true gaze duration (d)
+    # This is the distribution p(dhat|d)
+    #
+    # We need to invert this to get p(d|dhat) using Bayes rule. 
 
-    # As an intermediate step for testing, lets return distrubution around measurement = d
-    result = extract_intervals(P[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
+    posterior = invert_distribution(prior, P)
 
-    #print(P[G,:])
-    #print("Total Probability:", P[G,:].sum())
+    # Return distrubution around measurement = d
+    result = extract_intervals(posterior[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
+
+    print(posterior[G,:])
+    print("Total Probability:", posterior[G,:].sum())
+
     return result
+
+###########################################################
+def invert_distribution(prior, likelihood):
+    """
+    We want to generate a posterior probability distribution using Bayes Rule
+    Provided we get a prior probability and a liklihood (conditional probabilities)
+    Likelihood should be a two dimensional array.
+    * First dimension is the actual value
+    * Second dimension is the measured value
+    So by holding the first dimension fixed, 
+    The second dimension contains the distribution P(measured|actual)
+    We invert this to return P(actual|measured)
+    """
+    dim_actual, dim_measured = likelihood.shape
+    rez = np.zeros([dim_measured,dim_actual])
+    for dhat in range(0,dim_measured):
+        # Extract those measurements as a vector
+        vec = likelihood[:,dhat]
+        numera = prior * vec
+        denom = numera.sum()
+        posterior = numera/denom
+        rez[dhat,:] = posterior
+    return rez
 
 ###########################################################
 def extract_intervals(dist, intervals, increment):
