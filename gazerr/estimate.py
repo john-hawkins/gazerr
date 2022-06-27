@@ -2,40 +2,75 @@ import pandas as pd
 import numpy as np
 import random
 import math
+ 
+#################################################################################
+def calculate_interval( measure, session, increment, posterior):
+    measure = round(float(measure))
+    session = round(float(session))
+    D = math.floor(session / increment) + 1
+    G = math.floor(measure / increment) 
+    if measure > session:
+        raise Exception('InvalidRequest', 'Measured duration cannot be longer than session')
+    # Return distrubution for Measurement G
+    result = extract_intervals(posterior[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
+    measurements = [x * increment for x in range(0,D)]
+    print("Posterior\n", posterior[G,:])
+    print("Total Probability: ", posterior[G,:].sum())
+    expected_value = (posterior[G,:]*measurements).sum()
+    print("Expected Value: ", expected_value)
+    return result
 
-def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y):
+#################################################################################
+def calculate_expectations(session, increment, posterior):
+    session = round(float(session))
+    D = math.floor(session / increment) + 1
+    measurements = [x * increment for x in range(0,D)]
+    results = pd.DataFrame(columns=["Measured","Expected"])
+    for d in range(0,D):
+        expected_value = (posterior[d,:]*measurements).sum()
+        print("Measured:", measurements[d], " Expected Value: ", expected_value)
+        results = results.append({
+            "Measured":measurements[d],
+            "Expected":expected_value
+        }, ignore_index=True)
+
+    return results
+
+#################################################################################
+def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r_y, max_x=None, max_y=None):
     """
-    Calculate error bounds on a gaze duration measurement.
+    Calculate the posterior distributions for actual gaze duration over all possible measurements
+    For a given session length, and granuality specified by interval.
     Params
     * df: A dataframe of eye tracking calibration data
-    * measure: A gaze duration measurement (in milliseconds)
     * session: The eye tracking session length (in milliseconds)
+    * interval: The discrete step size for possible measurements (in milliseconds)
     * top_l_x, top_l_y, bot_r_x, bot_r_y : Top left and bottom right coordinates of target.
-    
-    Returns: A series of probabilistic error bounds
+    * max_x, max_y  : Screen dimensions (Optional) Will take max values in the validation file as default
+
+    Returns: A 2 dimensions array containing posterior distributions over reall gaze duration for measurments.
+             Dimension 1: Index of measured duration.
+             Dimension 2: Index of actual duration.
+             Cell Value : Probability of that specific combination. 
+                          Fix first dimension and second dimensions sums to 1
     """
 
     if not (df.columns == ['target_x','target_y','gaze_x','gaze_y']).all():
         msg = 'Calibration data must consist of columns: target_x, target_y, gaze_x, gaze_y'
         raise Exception('InvalidRequest', msg)
 
-    if measure > session:
-        raise Exception('InvalidRequest', 'Measured duration cannot be longer than session')
-
-    # Force measure and session to be rounded integers
-    measure = round(float(measure))
+    # Force session to be rounded integers
     session = round(float(session))
-    increment = 50
     N = 500
     inc = 1/N
     D = math.floor(session / increment) + 1
-    G = math.floor(measure / increment) 
     prior = 1/D
     P = np.zeros([D,D])
     top_l = (top_l_x, top_l_y)
     bot_r = (bot_r_x, bot_r_y)
 
-    max_X, max_y = extract_screen_limits(df, bot_r_x, bot_r_y)
+    if max_x==None:
+        max_x, max_y = extract_screen_limits(df, bot_r_x, bot_r_y)
 
     def euclidean(point, ref):
         dist = [(a - b)**2 for a, b in zip(point, ref)]
@@ -73,7 +108,7 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     for d in range(0,D):
         for n in range(0,N):
             in_path = get_path(d, top_l_x, top_l_y, bot_r_x, bot_r_y)
-            out_path = get_path(D-d, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            out_path = get_path(D-d, 0, 0, max_x, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
             path = in_path + out_path
             measured_path = [apply_measurement_noise(point) for point in path] 
             insiders = [int(inside(p,top_l,bot_r)) for p in measured_path]
@@ -89,18 +124,10 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
 
     posterior = invert_distribution(prior, P)
 
-    # Return distrubution for Measurement G
-    result = extract_intervals(posterior[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
+    return posterior
 
-    measurements = [x * increment for x in range(0,D)]
-    print("Posterior\n", posterior[G,:])
-    print("Total Probability: ", posterior[G,:].sum())
-    expected_value = (posterior[G,:]*measurements).sum()
-    print("Expected Value: ", expected_value) 
 
-    return result
-
-###########################################################
+################################################################################################
 def invert_distribution(prior, likelihood):
     """
     We want to generate a posterior probability distribution using Bayes Rule
@@ -157,13 +184,13 @@ def extract_screen_limits(df, bot_r_x, bot_r_y):
     Take the calibration data and determine the maximum screen size 
     target_x,target_y,gaze_x,gaze_y
     """
-    max_X = df['target_x'].max()
-    if max_X < bot_r_x:
-        max_X = bot_r_x
-    max_Y = df['target_y'].max()
-    if max_Y < bot_r_y:
-        max_Y = bot_r_y
-    return max_X,max_Y
+    max_x = df['target_x'].max()
+    if max_x < bot_r_x:
+        max_x = bot_r_x
+    max_y = df['target_y'].max()
+    if max_y < bot_r_y:
+        max_y = bot_r_y
+    return max_x, max_y
 
 ###########################################################
 def get_path(n, l_x, l_y, r_x, r_y, exc_l_x=-1,exc_l_y=-1,exc_r_x=-1,exc_r_y=-1):

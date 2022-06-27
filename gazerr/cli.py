@@ -4,6 +4,8 @@ import sys
 import os
 
 from .estimate import calculate_interval
+from .estimate import calculate_posterior
+from .estimate import calculate_expectations
 
 ####################################################################################
 def load_calibration_data(input_path):
@@ -11,7 +13,7 @@ def load_calibration_data(input_path):
     return df
 
 ####################################################################################
-def run_simulation(df, measure, session, top_left, bot_right, posterior):
+def run_simulation(df, measure, session, top_left, bot_right, results_path):
     top = top_left.split(",")
     bot = bot_right.split(",")
     if len(top) != 2:
@@ -33,8 +35,13 @@ def run_simulation(df, measure, session, top_left, bot_right, posterior):
         print("BOTTOM RIGHT COORDINATES MUST BE A COMMA SEPARATED PAIR OF INTEGERS")
         exit(1)
 
-    results = calculate_interval(df, measure, session, tlx, tly, brx, bry)
-    return results
+    increment = 50
+    posterior = calculate_posterior(df, session, increment, tlx, tly, brx, bry)
+    expected = calculate_expectations(session, increment, posterior)
+    expected.to_csv(results_path+"/expected_values.csv",index=False, header=True)
+    results = calculate_interval(measure, session, increment, posterior)
+    results.to_csv(results_path+"/error_bounds.csv",index=False, header=True)
+
 
 ####################################################################################
 def main():
@@ -66,10 +73,10 @@ def main():
                        type=str,
                        help='X,Y Position for bottom right of target bounding box.')
 
-    parser.add_argument('posterior_file',
-                       metavar='posterior_file',
+    parser.add_argument('results',
+                       metavar='results',
                        type=str,
-                       help='Path to write out the posterior distribution.')
+                       help='Path to directory for results: posterior distribution and expected values.')
 
     args = parser.parse_args()
     data = args.calibration_data
@@ -77,7 +84,12 @@ def main():
     session = args.session_length
     top_left = args.target_top_left
     bottom_right = args.target_bottom_right
-    posterior = args.posterior_file
+    results = args.results
+
+    if measure > session:
+        print(" ERROR")
+        print('Measured duration cannot be longer than session')
+        sys.exit()
 
     if not os.path.isfile(data):
         print(" ERROR")
@@ -85,8 +97,9 @@ def main():
         sys.exit()
 
     df = load_calibration_data(data)
-    result = run_simulation(df, measure, session, top_left, bottom_right, posterior)
-    print(result)
+
+    run_simulation(df, measure, session, top_left, bottom_right, results)
+
 
 ##########################################################################################
 if __name__ == '__main__':

@@ -11,19 +11,22 @@ distribution of true gaze durations given a measured gaze duration.
 
 The application can be used from the command line by passing in a path to the
 calibration file and the parameters for the duration measurement that will be
-bounded. Note: that the final two parameters should be comma separated sets
+bounded. Note: that the penultimate two parameters should be comma separated sets
 of integers that depict x,y coordiantes in pixels. The measurement length and
 session lenth should be expressed in milliseconds.
 
+The final parameter is a path to a directory in which to store the raw results
+
 ```
-gazerr <CALIBRATION> <MEASUREMENT> <SESSION> <TARGET TOP LEFT> <TARGET BOTTOM RIGHT>
+gazerr <CALIBRATION> <MEASUREMENT> <SESSION> <TARGET TOP LEFT> <TARGET BOTTOM RIGHT> <RESULTS>
 ```
 
 To use the application without installing it you can employ the runner script.
 Example below, using the supplied calibration data:
 
 ```
-python ./gazerr-runner.py data/validation_data.csv 300 1800 20,20 488,80
+mkdir results/MREC_MAE_50
+python ./gazerr-runner.py data/validation_50_MAE.csv 400 1000 40,40 340,290 results/MREC_MAE_50
 ```
 
 Alternatively, you may inspect the code and use the library functions directly
