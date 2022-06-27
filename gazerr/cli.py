@@ -11,7 +11,7 @@ def load_calibration_data(input_path):
     return df
 
 ####################################################################################
-def run_simulation(df, measure, session, top_left, bot_right):
+def run_simulation(df, measure, session, top_left, bot_right, posterior):
     top = top_left.split(",")
     bot = bot_right.split(",")
     if len(top) != 2:
@@ -66,12 +66,18 @@ def main():
                        type=str,
                        help='X,Y Position for bottom right of target bounding box.')
 
+    parser.add_argument('posterior_file',
+                       metavar='posterior_file',
+                       type=str,
+                       help='Path to write out the posterior distribution.')
+
     args = parser.parse_args()
     data = args.calibration_data
     measure = args.measurement
     session = args.session_length
     top_left = args.target_top_left
     bottom_right = args.target_bottom_right
+    posterior = args.posterior_file
 
     if not os.path.isfile(data):
         print(" ERROR")
@@ -79,7 +85,7 @@ def main():
         sys.exit()
 
     df = load_calibration_data(data)
-    result = run_simulation(df, measure, session, top_left, bottom_right)
+    result = run_simulation(df, measure, session, top_left, bottom_right, posterior)
     print(result)
 
 ##########################################################################################

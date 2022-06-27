@@ -39,14 +39,19 @@ John Hawkins \\ email \href{mailto:john.hawkins@playgroundxyz.com}{john.hawkins@
 
 Eye tracking applications produce a series of gaze fixation points that can be attributed to
 objects within a subject's field of vision. Error is typically measured on the basis of individual
-gaze fixation point measurements. However, often these applications are used to infer a gaze duration
-metric from a series of fixation measurements. In this work we develop an algorithm for estimating
-the error bounds on gaze duration measurement through monte carlo simualtion based on the content
+gaze fixation point measurements. These applications are often used to infer a gaze duration
+metric from a series of fixation measurements. There is no direct method for infering the error in
+a gaze duration measurement from an error in fixation points. 
+In this work we develop an algorithm for estimating
+the error bounds on gaze duration measurement through monte carlo simulation based on the content
 of an eye tracking validation log file. We provide this algorithm as an open source application
 that allows for robust estimates of the error distribution of gaze duration measurements. 
 We use this application to conduct experiments on the expected error bounds for different duration
 measurements across a range of session lengths and area of interest positions within the viewport
-of mobile devices. The results indicate...
+of mobile devices. The results indicate that error in gaze duration estimation is sensitive to
+the size of fixation error as well as the proportion of total field of view that the object occupies
+and the proportion of viewing time that was taken with gaze fixation.
+
 
 \section{Introduction}
 

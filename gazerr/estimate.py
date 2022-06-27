@@ -25,11 +25,11 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     # Force measure and session to be rounded integers
     measure = round(float(measure))
     session = round(float(session))
-    increment = 100
-    N = 1000
+    increment = 50
+    N = 500
     inc = 1/N
     D = math.floor(session / increment) + 1
-    G = math.floor(measure / increment) + 1
+    G = math.floor(measure / increment) 
     prior = 1/D
     P = np.zeros([D,D])
     top_l = (top_l_x, top_l_y)
@@ -73,7 +73,7 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
     for d in range(0,D):
         for n in range(0,N):
             in_path = get_path(d, top_l_x, top_l_y, bot_r_x, bot_r_y)
-            out_path = get_path(D-d-1, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            out_path = get_path(D-d, 0, 0, max_X, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
             path = in_path + out_path
             measured_path = [apply_measurement_noise(point) for point in path] 
             insiders = [int(inside(p,top_l,bot_r)) for p in measured_path]
@@ -89,11 +89,14 @@ def calculate_interval(df, measure, session, top_l_x, top_l_y, bot_r_x, bot_r_y)
 
     posterior = invert_distribution(prior, P)
 
-    # Return distrubution around measurement = d
+    # Return distrubution for Measurement G
     result = extract_intervals(posterior[G,:], [0.99, 0.95,0.90,0.80], increment=increment )
 
-    print(posterior[G,:])
-    print("Total Probability:", posterior[G,:].sum())
+    measurements = [x * increment for x in range(0,D)]
+    print("Posterior\n", posterior[G,:])
+    print("Total Probability: ", posterior[G,:].sum())
+    expected_value = (posterior[G,:]*measurements).sum()
+    print("Expected Value: ", expected_value) 
 
     return result
 
@@ -114,26 +117,36 @@ def invert_distribution(prior, likelihood):
     for dhat in range(0,dim_measured):
         # Extract those measurements as a vector
         vec = likelihood[:,dhat]
-        numera = prior * vec
+        numera = np.nan_to_num(prior * vec)
         denom = numera.sum()
-        posterior = numera/denom
+        if denom > 0.0:
+           posterior = numera/denom
+        else:
+           posterior = np.zeros(len(numera))
         rez[dhat,:] = posterior
     return rez
 
 ###########################################################
 def extract_intervals(dist, intervals, increment):
     cumulative = 0
-    lowers = intervals.copy() 
-    uppers = intervals.copy() 
+    upper_bound = increment * (len(dist)-1)
+    lowers = np.zeros(len(intervals)) 
+    uppers = [upper_bound for x in lowers] 
     time = 0
     for t in range(dist.shape[0]):
         cumulative = cumulative + dist[t]
         for i in range(len(intervals)):
             if cumulative < (1 - intervals[i]):
                 lowers[i] = time
-            if cumulative < intervals[i]:
-                uppers[i] = time
         time = time + increment
+    time = upper_bound
+    cumulative = 0
+    for t in range(dist.shape[0]):
+        cumulative = cumulative + dist[len(dist)-t-1]
+        for i in range(len(intervals)):
+            if cumulative < (1 - intervals[i]):
+                uppers[i] = time
+        time = time - increment
 
     result = pd.DataFrame({"Level":intervals, "Lower":lowers, "Upper":uppers})
     return result
