@@ -1,3 +1,4 @@
+#!/bin/bash
 
 mkdir results/MREC_MAE_25
 python ./gazerr-runner.py data/validation_25_MAE.csv 400 1000 40,40 340,290 results/MREC_MAE_25

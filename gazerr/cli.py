@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import argparse
 import sys
 import os
@@ -37,6 +38,7 @@ def run_simulation(df, measure, session, top_left, bot_right, results_path):
 
     increment = 50
     posterior = calculate_posterior(df, session, increment, tlx, tly, brx, bry)
+    np.savetxt(results_path+"/posterior.out", posterior)
     expected = calculate_expectations(session, increment, posterior)
     expected.to_csv(results_path+"/expected_values.csv",index=False, header=True)
     results = calculate_interval(measure, session, increment, posterior)

@@ -61,7 +61,7 @@ def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r
 
     # Force session to be rounded integers
     session = round(float(session))
-    N = 500
+    N = 1500
     inc = 1/N
     D = math.floor(session / increment) + 1
     prior = 1/D
@@ -108,20 +108,18 @@ def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r
     for d in range(0,D):
         for n in range(0,N):
             in_path = get_path(d, top_l_x, top_l_y, bot_r_x, bot_r_y)
-            out_path = get_path(D-d, 0, 0, max_x, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
+            out_path = get_path(D-d-1, 0, 0, max_x, max_y, top_l_x, top_l_y, bot_r_x, bot_r_y)
             path = in_path + out_path
             measured_path = [apply_measurement_noise(point) for point in path] 
             insiders = [int(inside(p,top_l,bot_r)) for p in measured_path]
             dhat = sum(insiders)
             P[d,dhat] += inc    
 
-    # #######################################################################################
-    # At this point in the algorithm we have a set of probability distributions over
-    # the measured duration (dhat) for a range of potential values of true gaze duration (d)
-    # This is the distribution p(dhat|d)
-    #
-    # We need to invert this to get p(d|dhat) using Bayes rule. 
-
+    # ########################################################################
+    # At this point we have a set of probability distributions over
+    # the measured duration (dhat) for a range of potential values 
+    # of true gaze duration (d). This is the distribution p(dhat|d)
+    # We invert this to get p(d|dhat) using Bayes rule. 
     posterior = invert_distribution(prior, P)
 
     return posterior
