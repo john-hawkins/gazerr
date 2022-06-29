@@ -33,12 +33,12 @@ fig = plt.figure(figsize=(10,10))
 ax = fig.add_subplot()
 
 ax.set_title('Fixation Vs Duration Expected Error')
-ax.plot(errors, gaze_err_uni, c='darkorange', label="Uniform")
-ax.plot(errors, gaze_err_exp, c='teal', label="Exponential")
+ax.plot(errors, gaze_err_uni, c='darkorange', label="Uniform Measurement Distribution")
+ax.plot(errors, gaze_err_exp, c='teal', label="Exponential Measurement Distribution")
 ax.set_xlabel('Gaze Fixation μ Error (px)', fontsize=15)
 ax.set_ylabel('Gaze Duration μ Error (ms)', fontsize=15)
 ax.set_xlim([0, 175])
-ax.legend()
+ax.legend( prop={'size': 15} )
 
 plt.savefig("results/Fixation_vs_duration_error.png")
 

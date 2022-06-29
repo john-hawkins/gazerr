@@ -32,13 +32,35 @@ python ./gazerr-runner.py data/validation_50_MAE.csv 400 1000 40,40 340,290 resu
 Alternatively, you may inspect the code and use the library functions directly
 inside your own application.
 
+## Experiments
+
+All experiments for the research paper can be executed via a series of scripts.
+
+Create synthetic calibration data by running
+```
+python scripts/generate_datasets.py
+```
+
+Then execute the gazerr exeriments with
+```
+scripts/RUN_EXPERIMENTS.sh
+```
+
+Finally, analyse the results and create plots with
+```
+scripts/ANALYSE_RESULTS.sh
+```
+
 
 ### Documentation
 
 Preparing a paper that outlines the technique here: [paper/paper.tex](paper/paper.tex)
 
-Intending to submit to this conference
-http://asyu.inista.org/?language=EN#:~:text=The%20Innovations%20in%20Intelligent%20Systems,will%20be%20English%20and%20Turkish.
+Considering submission to the following:
+* https://www.journals.elsevier.com/computers-in-human-behavior
+* https://www.springer.com/journal/13428
+* https://cognitiveresearchjournal.springeropen.com/
+* https://etra.acm.org/2022/index.html
 
 
 

@@ -30,15 +30,17 @@ for i,err in enumerate(errors):
     df = pd.read_csv(file)
     df['error'] = abs(df['Measured']-df['Expected'])
     for m,e in zip(df['Measured'], df['error']):
-       dim1.append(err)
-       dim2.append(m)
-       dim3.append(e)
+       if m!=e:
+          dim1.append(err)
+          dim2.append(m)
+          dim3.append(e)
 
 colone="Fixation Error"
 coltwo="Measured Duration" 
 value="Duration Error"
 
 myplot = generate_2d_surface_plot(dim1, dim2, dim3, colone, coltwo, value)
+myplot.show()
 
-myplot.savefig("results/Error_surface.png")
+#myplot.savefig("results/Error_surface.png")
 

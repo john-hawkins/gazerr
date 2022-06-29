@@ -14,11 +14,14 @@ device_height = 667
 
 N = 1500
 
-def add_noise(x,y,maerr):
+def add_noise(x,y,maerr, bias=False):
     factor = 1.85
     part = math.sqrt(math.pow(maerr,2)/2)
     x_err = random.uniform(-part*factor,part*factor)
     y_err = random.uniform(-part*factor,part*factor)
+    if bias:
+        x_err = -abs(x_err)
+        y_err = -abs(y_err)
     return x+x_err,y+y_err
 
 def euclidean(row):
@@ -29,7 +32,9 @@ def euclidean(row):
 
 for mae in maes:
     results = pd.DataFrame(columns=header)
+    results2 = pd.DataFrame(columns=header)
     filename = "data/validation_%s_MAE.csv"%str(mae)
+    filename2 = "data/validation_%s_MAE_Biased.csv"%str(mae)
     for n in range(N):
         my_x = random.randrange(0, device_width, 20)
         my_y = random.randrange(0, device_height, 20)
@@ -41,10 +46,19 @@ for mae in maes:
               "gaze_y":gaze_y
            }, ignore_index=True
         )
-    results.to_csv(filename, index=False,header=True)
-    results['error'] = results.apply(euclidean, axis=1)
+        gaze_x, gaze_y = add_noise(my_x,my_y,mae,bias=True)
+        results2 = results2.append({
+              "target_x":my_x,
+              "target_y":my_y,
+              "gaze_x":gaze_x,
+              "gaze_y":gaze_y
+           }, ignore_index=True
+        )
+    #results.to_csv(filename, index=False,header=True)
+    results2.to_csv(filename2, index=False,header=True)
+    results2['error'] = results.apply(euclidean, axis=1)
     print("Expected MAE: ", mae)
-    print("Simulated MAE: ", results['error'].mean())
+    print("Simulated MAE: ", results2['error'].mean())
 
 
 
