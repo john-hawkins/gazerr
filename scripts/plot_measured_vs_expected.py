@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-file = "results/MREC_MAE_50/expected_values.csv"
+file = "results/MREC_MAE_60/expected_values.csv"
 df = pd.read_csv(file)
 
 measured = df['Measured']
