@@ -8,8 +8,7 @@ import matplotlib as mpl
 file_prefix = "results/MREC_MAE_"
 filename = "/expected_values.csv"
 
-errors = [25,50,75,100,125,150]
-#errors = [20,40,60,80,100,120,140,160]
+errors = [20,30,40,50,60,70,80,90,100,110,120,130,140,150,160]
 
 D = 21
 dim1 = []
