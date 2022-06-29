@@ -4,14 +4,15 @@ import pandas as pd
 
 header = ["target_x","target_y","gaze_x","gaze_y"]
 
-maes = [25, 50, 75, 100, 125, 150]
+maes = [20,30,40,50,60,70,80,90,100,110,120,130,140,150,160]
 
-# We use an iPhone 7 : which has a viewport of 375px × 667
-#  the number of software pixels (CSS pixels) present on a screen. 
+# We roughly approximate an iPhone 7 
+# Which has a viewport dimensions of 375px × 667
+#  (number of software pixels (CSS pixels) present on a screen) 
 device_width = 375
 device_height = 667
 
-N = 1000
+N = 5000
 
 def add_noise(x,y,maerr):
     factor = 1.85
@@ -30,8 +31,8 @@ for mae in maes:
     results = pd.DataFrame(columns=header)
     filename = "data/validation_%s_MAE.csv"%str(mae)
     for n in range(N):
-        my_x = int(random.uniform(0,device_width))
-        my_y = int(random.uniform(0,device_height))
+        my_x = random.randrange(0, device_width, 5)
+        my_y = random.randrange(0, device_height, 5)
         gaze_x, gaze_y = add_noise(my_x,my_y,mae)
         results = results.append({
               "target_x":my_x,

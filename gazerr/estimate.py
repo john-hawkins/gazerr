@@ -61,7 +61,7 @@ def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r
 
     # Force session to be rounded integers
     session = round(float(session))
-    N = 1500
+    N = 1000
     inc = 1/N
     D = math.floor(session / increment) + 1
     prior = 1/D

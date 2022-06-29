@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 file_prefix = "results/MREC_MAE_"
 filename = "/expected_values.csv"
 
-errors = [25,50,75,100,125,150]
+errors = [20,30,40,50,60,70,80,90,100,110,120,130,140,150,160]
 gaze_err_uni = []
 gaze_err_exp = []
 

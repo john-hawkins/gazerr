@@ -265,18 +265,35 @@ exponential distribution.
 \label{fig:fixation_vs_duration}
 \end{figure}
 
-As shown in Figure \ref{fig:fixation_vs_duration} we see
+As shown in Figure \ref{fig:fixation_vs_duration} we see that the error in gaze duration
+grows with error in fixation points, as would be expected. However, when we use the exponential
+weighting to calculate the expected error in duration, the gaze duration error grows much slower
+than in the uniform case. This suggests that the observed tendency toward smaller measurements
+in area of interest studies means lower expected error.
 
-
-We show all experimental results in Figure \ref{fig:plots}. The top series corresponds
-to experiments where the AOI is the top third of the viewport, the middle and bottom 
-series correspond to their respective thirds of the viewport. In each plot we show
-data for a specific session length ranging from 10 to 30 seconds, where the x axis
-depicts the measured gaze duration and the y-axis shows the confidence range for the
-true gaze duration.  
+In our final experiment we look at the effect of both the size of the measured 
+gaze duration and the mean error of fixation on the expected error in gaze duration.
 
 
 \section{Conclusion}
+
+We have demonstrated that the statistial information contained in eye tracking validation
+data can be utilised for estimating errors in gaze duration estimation. The process involves
+simulating the distribution of measurements for a given true durastion, and then inverting
+it into a distribution over true duration for a given measurement.
+
+We have released this approach as the open source application gazerr, and used it to explore
+the relationship between fixation error and duration error. Our results show that the nature
+of the error in gaze duration depends on the size of the measurement. Smaller measurements
+tend toward over prediction, and larger measurements towards under prediction. We plotted
+the relationship between expected error and saw that observed tendency toward smaller duration
+measurements (estimated with an psuedo-exponential distribution) delivers a slower growing
+expected duraiton error with the mean error in fixation points.
+
+Finally, our simualtions revealed that for large error in fixation points certain measurements
+become some unlikely that our monte carlo simualtions placed none of the probability density
+in those regions. This strongly suggests that an additional downside to large fixation point error
+is a reduced range of measurement for area of interest studies.
 
 
 
