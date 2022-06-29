@@ -95,11 +95,16 @@ def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r
        temp.sort_values('distance', inplace=True)
        top1 = temp.loc[0,:]['distance']
        top2 = temp.loc[1,:]['distance']
-       threshold = top2/(top1+top2)
-       if random.uniform(0,1) < threshold:
+       top3 = temp.loc[2,:]['distance']
+       threshold1 = (top2+top3)/(top1+top2+top3)
+       threshold2 = threshold1 + (1-threshold1)*(top3)/(top2+top3)
+       randy = random.uniform(0,1)
+       if randy < threshold1:
            noise_set = temp.loc[0,:]
-       else:
+       elif randy < threshold2:
            noise_set = temp.loc[1,:]
+       else:
+           noise_set = temp.loc[2,:]
        recs = len(noise_set['err_x'])
        rn = random.randrange(0,recs)
        return (point[0] + noise_set['err_x'][rn], point[1] + noise_set['err_y'][rn])
