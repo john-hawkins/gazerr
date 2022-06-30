@@ -44,39 +44,31 @@ coltwo="Measured Duration"
 value="Duration Error"
 
 # set up a figure twice as wide as it is tall
-fig = plt.figure(figsize=plt.figaspect(0.5))
+#fig = plt.figure(figsize=plt.figaspect(0.5))
+fig = plt.figure(figsize=(18,8))
 
 # =============
 # First subplot
 # =============
-# set up the axes for the first plot
 ax = fig.add_subplot(1, 2, 1, projection='3d')
-
-# plot a 3D surface like in the example mplot3d/surface3d_demo
-
-#surf = ax.plot_surface(dim1, dim2, dim3, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-ax.plot_trisurf(dim1, dim2, dim3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+surf = ax.plot_trisurf(dim1, dim2, dim3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 ax.set_xlabel(colone)
 ax.set_ylabel(coltwo)
 ax.set_zlabel("")
-#fig.colorbar(surf, shrink=0.5, aspect=10)
+ax.set_title('A) Error Surface - All Measurements', y=-0.1)
 
 # ==============
 # Second subplot
 # ==============
 # set up the axes for the second plot
 ax = fig.add_subplot(1, 2, 2, projection='3d')
-
-# plot a 3D wireframe like in the example mplot3d/wire3d_demo
-#surf = ax.plot_surface(v2_dim1, v2_dim2, v2_dim3, rstride=1, cstride=1, cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-ax.plot_trisurf(v2_dim1, v2_dim2, v2_dim3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+surf = ax.plot_trisurf(v2_dim1, v2_dim2, v2_dim3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 ax.set_xlabel(colone)
 ax.set_ylabel(coltwo)
 ax.set_zlabel(value)
-
+fig.colorbar(surf, shrink=0.5, aspect=10)
+ax.set_title('B) Error Surface - Excluding No Density Regions', y=-0.26)
 plt.show()
-
 
 #plt.savefig("results/Error_surfaces.png")
 

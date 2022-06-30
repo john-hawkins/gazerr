@@ -12,7 +12,7 @@ expected = df['Expected']
 measured2 = df2['Measured']
 expected2 = df2['Expected']
 
-fig = plt.figure(figsize=(10,10))
+fig = plt.figure(figsize=(12,6))
 
 ax = fig.add_subplot()
 ax.set_title('Measured Duration Vs Expected Duration')
