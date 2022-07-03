@@ -2,6 +2,8 @@
 
 Gazerr is an application for estimating the expected error in a gaze duration
 measurement derived from repeated application of a point of gaze model.
+It is particularly applicable to machine learning models that work with device
+cameras to predict a stream of gaze fixation points from facial images.
 
 The method requires an input dataset of validation points from the point
 of gaze predictive model. This data is used to generate the probability 
