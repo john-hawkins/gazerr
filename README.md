@@ -43,16 +43,16 @@ Create synthetic calibration data by running
 python scripts/generate_datasets.py
 ```
 
-Then execute the gazerr exeriments with
+Then execute the gazerr exeriments with the following two commands:
 ```
 scripts/RUN_EXPERIMENTS.sh
+scripts/RUN_BIAS_EXPERIMENTS.sh
 ```
 
-Finally, analyse the results and create plots with
+Finally, analyse the results and generate the plots with
 ```
 scripts/ANALYSE_RESULTS.sh
 ```
-
 
 ### Documentation
 
