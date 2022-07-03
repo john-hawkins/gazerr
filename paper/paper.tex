@@ -236,7 +236,11 @@ For the sake of our simulations we use a fixed sized simulated device with viewp
 dimensions of 350 by 627. Our area of interest (AOI) is a fixed position medium rectangle ad unit (MREC)
 that is located toward the top of the screen. We iterate over a range of potential mean error
 values (determined to be the mean Euclidean distance between the measured fixation and actual fixation).
-For each of these mean error values we generate a synthetic eye tracking calibration file.
+For each of these mean error values we generate a synthetic eye tracking calibration file. We produce
+two versions of this calibration data, one in which the error is distributed around the true target,
+and a second biased version in which the error tends toward the upper left of the true position. We 
+include the biased calibration data as it is consistent with our observations of real eye tracking data
+and we explore the extent to which this bias affects gaze duration measurements.
 
 We feed each of these synthetic calibration files into gazerr to calculate posterior probability
 distributions over true gaze duration for the set of measured gaze durations. These posterior
@@ -258,8 +262,11 @@ results are shown in Figure \ref{fig:measured_vs_expected}.
 
 The result shown in Figure \ref{fig:measured_vs_expected} is indicative of what we see under
 multiple variations of the simulation configuration. At lower meaurement values there is a 
-tendency for the measurement to be an over estimation, and at higher values an under-estimation.
- 
+tendency for the measurement to be an accurate estimation, while at higher values it tends
+toward an under-estimation of the true gaze duration. Surprisingly the results using the
+biased calibration data seem to mitigate this effect somewhat, but the overall pattern 
+remains consistent.
+
 We next examined the way that exected error in the gaze duration estimate tracks with expected 
 error in the gaze fixation points. This involved calculating the mean absolute error in gaze
 duration for each of the mean fixation error validation files. We performed this calculation
@@ -277,9 +284,10 @@ exponential distribution.
 
 As shown in Figure \ref{fig:fixation_vs_duration} we see that the error in gaze duration
 grows with error in fixation points, as would be expected. However, when we use the exponential
-weighting to calculate the expected error in duration, the gaze duration error grows much slower
+weighting to calculate the expected error in duration the gaze duration error grows much slower
 than in the uniform case. This suggests that the observed tendency toward smaller measurements
-in area of interest studies means lower expected error.
+in area of interest studies means lower expected error overall. This pattern is true for the 
+centrally distributed error (A) as well as the biased calibration error (B).
 
 In our final experiment we look at the effect of both the size of the measured 
 gaze duration and the mean error of fixation on the expected error in gaze duration.
@@ -293,11 +301,20 @@ in Figure \ref{fig:error_surface}
 \label{fig:error_surface}
 \end{figure}
 
-There is a region in Figure \ref{fig:error_surface} that is unpopulated due to the fact that
-the estimated distributions contained no density in these regions. This was observed for 
+The left hand plot shows the complete error surface in which you will observe large spikes in
+error in the corner correspinding to high MAE for the fixation models and high measurements of
+gaze duration. This effect is caused by a complete absence of probability density in these
+regions, meaning that the error is maximal because the expected value is zero. This effect 
+was consistenlt observed for 
 eye tracking models with high fixation error and when the measured duration was high. Meaning
 that our model estimates that when fixation error is this high, measurements of these values
 become extremely unlikley to be observed.
+
+We added the right hand plot in Figure \ref{fig:error_surface} to illustrate the error surface
+in the absence of these deceptive outliers. We see that in general the expected error in a gaze
+duration is maximal around the mid point of the measurement range. The effect is lessened by 
+lower MAE in the fixation models, but remains consistent for all levels of fixation error.
+
 
 \section{Conclusion}
 
