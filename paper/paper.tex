@@ -218,8 +218,10 @@ P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ \sum_{\delta \in D} P(\
 \subsection{Implementation}
 
 The algorithm described in the preceding sections has been implemented as an open source python 
-package called gazerr. It can be used as a software library, or deployed as a command line application. Source
-code is available on GitHub () and the package can be installed from PyPi.
+package called \textit{gazerr}. 
+It can be used as a software library, exposing functions for calculating the probability densities,
+or it can deployed as a command line application. 
+The source code is available on GitHub and the python package can be installed from PyPi.
 
 The source repository for the gazerr application also contains a series of scripts for generating data
 sets and running the experiments outlined in the next section. Full details available in the package
@@ -320,22 +322,21 @@ lower MAE in the fixation models, but remains consistent for all levels of fixat
 
 We have demonstrated that the statistial information contained in eye tracking validation
 data can be utilised for estimating errors in gaze duration estimation. The process involves
-simulating the distribution of measurements for a given true durastion, and then inverting
-it into a distribution over true duration for a given measurement.
+simulating the distribution of measured duration for each possible true duration, 
+and then inverting it with Bayes rule into a distribution over true duration for a given measurement.
 
-We have released this approach as the open source application gazerr, and used it to explore
+We have released this approach as the open source application \textit{gazerr} and used it to explore
 the relationship between fixation error and duration error. Our results show that the nature
 of the error in gaze duration depends on the size of the measurement. Smaller measurements
-tend toward over prediction, and larger measurements towards under prediction. We plotted
+tend to have lower expected error while larger measurements tend toward under prediction. We plotted
 the relationship between expected error and saw that observed tendency toward smaller duration
 measurements (estimated with an psuedo-exponential distribution) delivers a slower growing
-expected duraiton error with the mean error in fixation points.
+expected duration error with the mean error in fixation points.
 
 Finally, our simualtions revealed that for large error in fixation points certain measurements
-become some unlikely that our monte carlo simualtions placed none of the probability density
+become so unlikely that our monte carlo simualtions placed none of the probability density
 in those regions. This strongly suggests that an additional downside to large fixation point error
 is a reduced range of measurement for area of interest studies.
-
 
 
 \bibliographystyle{IEEEtran}
