@@ -54,7 +54,7 @@ for mae in maes:
               "gaze_y":gaze_y
            }, ignore_index=True
         )
-    #results.to_csv(filename, index=False,header=True)
+    results.to_csv(filename, index=False,header=True)
     results2.to_csv(filename2, index=False,header=True)
     results2['error'] = results.apply(euclidean, axis=1)
     print("Expected MAE: ", mae)
