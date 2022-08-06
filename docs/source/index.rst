@@ -1,7 +1,7 @@
 gazerr: Gaze Duration Error Estimation
 =========================================
 
-``gazerru`` is a python library and command line utility 
+``gazerr`` is a python library and command line utility 
 for estimating the error distribution of gaze duration measurements
 using eye tracking gaze fixation tools.
 

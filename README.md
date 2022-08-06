@@ -60,7 +60,8 @@ scripts/ANALYSE_RESULTS.sh
 
 ### Documentation
 
-Additional documentation to be made available on Read the Docs
+Additional documentation to be made available on 
+[Read the Docs](https://gazerr.readthedocs.io/en/latest/)
 
 If you use `gazerr` in your research please cite the following article
 
@@ -69,7 +70,7 @@ If you use `gazerr` in your research please cite the following article
    author = {John Hawkins},
    year = {2022},
    title = {Estimating Gaze Duration Error from Eye Tracking Data},
-   journal = {}
+   journal = {TBC}
 }
 ```
 
