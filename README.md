@@ -9,6 +9,10 @@ The method requires an input dataset of validation points from the point
 of gaze predictive model. This data is used to generate the probability 
 distribution of true gaze durations given a measured gaze duration.
 
+### Installation
+
+Install from source code or from PyPi
+
 ### Usage
 
 The application can be used from the command line by passing in a path to the
@@ -56,14 +60,18 @@ scripts/ANALYSE_RESULTS.sh
 
 ### Documentation
 
-Preparing a paper that outlines the technique here: [paper/paper.tex](paper/paper.tex)
+Additional documentation to be made available on Read the Docs
 
-Considering submission to the following:
-* https://www.journals.elsevier.com/computers-in-human-behavior
-* https://www.springer.com/journal/13428
-* https://cognitiveresearchjournal.springeropen.com/
-* https://etra.acm.org/2022/index.html
+If you use `gazerr` in your research please cite the following article
 
+```
+@article{hawkins2022,
+   author = {John Hawkins},
+   year = {2022},
+   title = {Estimating Gaze Duration Error from Eye Tracking Data},
+   journal = {}
+}
+```
 
 
 

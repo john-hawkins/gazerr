@@ -5,6 +5,10 @@ import math
  
 #################################################################################
 def calculate_interval( measure, session, increment, posterior):
+    """
+    Take the posterior distribution and extract the section for a specific measurement.
+    This function depends on the output of ``calculate_posterior``
+    """
     measure = round(float(measure))
     session = round(float(session))
     D = math.floor(session / increment) + 1
@@ -22,6 +26,11 @@ def calculate_interval( measure, session, increment, posterior):
 
 #################################################################################
 def calculate_expectations(session, increment, posterior):
+    """
+    Take a posterior distribution calculated by ``calculate_posterior`` and iterate
+    over the quantised measurements to calculate the expected true gaze duration
+    for each. Return results in a data frame.
+    """
     session = round(float(session))
     D = math.floor(session / increment) + 1
     measurements = [x * increment for x in range(0,D)]
@@ -49,10 +58,11 @@ def calculate_posterior(df, session, increment, top_l_x, top_l_y, bot_r_x, bot_r
     * max_x, max_y  : Screen dimensions (Optional) Will take max values in the validation file as default
 
     Returns: A 2 dimensions array containing posterior distributions over reall gaze duration for measurments.
-             Dimension 1: Index of measured duration.
-             Dimension 2: Index of actual duration.
-             Cell Value : Probability of that specific combination. 
-                          Fix first dimension and second dimensions sums to 1
+    * Dimension 1: Index of measured duration.
+    * Dimension 2: Index of actual duration.
+    * Cell Value : Probability of that specific combination. 
+               
+    Note: If you fix the first dimension the the values over the second dimensions sum to 1
     """
 
     if not (df.columns == ['target_x','target_y','gaze_x','gaze_y']).all():
