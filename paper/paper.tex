@@ -38,29 +38,31 @@ John Hawkins \\ email \href{mailto:john.hawkins@playgroundxyz.com}{john.hawkins@
 \section{Abstract}
 
 Eye tracking applications produce a series of gaze fixation points that can be attributed to
-objects within a subject's field of vision. Error is typically measured on the basis of individual
-gaze fixation point measurements. These applications are often used to infer a gaze duration
-metric from a series of fixation measurements. There is no direct method for inferring the error in
+objects within a subject's field of vision. Error is typically measured on the basis 
+of individual gaze fixation point measurements. These applications are often used 
+to infer a gaze duration metric from a series of fixation measurements. 
+There is no direct method for inferring the error in
 a gaze duration measurement from an error in fixation points. 
 
-In this work we develop an algorithm for estimating
-the error distribution of gaze duration measurement through Monte Carlo simulation 
-using the content of an eye tracking calibration log file. 
+In this work we develop an algorithm for estimating the error distribution of 
+gaze duration measurement through Monte Carlo simulation using the content 
+of an eye tracking calibration log file. 
 We provide this algorithm in an open source application
 to allow researchers to understand the error in their gaze duration measurements. 
-We use this application to conduct experiments on the expected error bounds for different duration
-measurements across a fixed session length for a simulated advertising area of interest 
-study on a mobile device. 
+We use this application to conduct experiments on the expected error bounds for 
+different duration measurements across a fixed session length for a simulated 
+advertising area of interest study on a mobile device. 
 The results indicate that error in gaze duration estimation is sensitive to
 fixation error beyond a bound that will depend on the size of interest and the session length.
 
 
 \section{Introduction}
 
-Eye tracking is an important technology with a wide variety of applications. It permits evaluation
-of software user interfaces\cite{Harezlak2015}, the development of new forms of software interaction, as well as a potential method of biometric identification\cite{Kasprowski2018}. 
-Eye tracking has become a core tool for empirical investigations 
-into human behaviour and is widely used as a method of measuring explicit attention to visual stimuli. 
+Eye tracking is an important technology with a wide variety of applications. 
+It permits evaluation of software user interfaces\cite{Harezlak2015}, 
+the development of new forms of software interaction, as well as a potential method of biometric identification\cite{Kasprowski2018}. Eye tracking has become a core tool for empirical 
+investigations into human behaviour and is widely used as a method of measuring explicit 
+attention to visual stimuli. 
 It has been applied to study psychological phenomena ranging from cognition\cite{Brunye2019}
 to mental health\cite{Duque2014,Rudich-Strassler2022}, and is now routinely used to evaluate 
 advertising \cite{Hervet2011}. Eye tracking technology has allowed marketing researchers 
@@ -84,7 +86,9 @@ depending on the location of the true fixation point within the subjects field o
 The errors in fixation point measurement for a given eye tracking solution are routinely
 adjusted through a process called calibration. Improvements in the callibration process
 are an ongoing focus for the development of algorithms\cite{Zhang2014,Hassoumi2019} 
-and software tools\cite{ETCAL2018} 
+and software tools\cite{ETCAL2018}. In some scenarios there are additional considerations
+such as whether to use fixation data from individual eyes, or a composite 
+signal\cite{Hooge2019}.
 
 When fixation models are used sequentially for the purpose of estimating gaze duration
 (as is commonly done in point of salience or advertising media studies), 
