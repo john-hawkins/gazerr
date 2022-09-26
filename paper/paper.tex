@@ -84,13 +84,21 @@ the nature of the media being presented, the variety of faces and lighting condi
 in the training data. In addition, it has been observed that the error profile varies 
 depending on the location of the true fixation point within the subjects field of view.
 The errors in fixation point measurement for a given eye tracking solution are routinely
-adjusted through a process called calibration. Improvements in the callibration process
+monitored and adjusted through a process called calibration, in which users are presented
+a series or \it{required fixation locations} (RFL) which are compared with measured 
+points of fixation\cite{Hornof2002}. 
+Improvements in the callibration process
 are an ongoing focus for the development of algorithms\cite{Zhang2014,Hassoumi2019} 
 and software tools\cite{ETCAL2018}. In some scenarios there are additional considerations
 such as whether to use fixation data from individual eyes, or a composite 
 signal\cite{Hooge2019}.
 
-Discuss error elments around accuracy and precision \cite{Holmqvist2022}
+Typically the nature of the error detected in the calibration process can be broken
+into both accuracy and precisions. Wherein accuracy is the tendency for the measure
+fixation points to be closer to true fixation, and precision is the tendency for the
+measured locations to vary for a given true fixation\cite{Holmqvist2022}. This distinction
+is critical because it forms the basis of methods that can correct for the kind of 
+systematic bias observed with low precision eye tracking.
 
 When fixation models are used sequentially for the purpose of estimating gaze duration
 (as is commonly done in point of salience or advertising media studies), 
