@@ -37,12 +37,15 @@ John Hawkins \\ email \href{mailto:john.hawkins@playgroundxyz.com}{john.hawkins@
 
 \section{Abstract}
 
-Eye tracking applications produce a series of gaze fixation points that can be attributed to
-objects within a subject's field of vision. Error is typically measured on the basis 
-of individual gaze fixation point measurements. These applications are often used 
-to infer a gaze duration metric from a series of fixation measurements. 
-There is no direct method for inferring the error in
-a gaze duration measurement from an error in fixation points. 
+Eye tracking technologies produce a series of timestamped gaze fixation points 
+that can be attributed to objects within a subject's field of vision. 
+These fixation points are often aggregated in order to generate a measurement
+of the gaze duration in Area of Interest studies.
+Error is typically measured on the basis of the variation between individual 
+gaze fixation points and the intended point of fixation.
+These underlying errors in fixation have no inherent transformation for making
+a statement about error in gaze duration, even though they are expected to be
+related.
 
 In this work we develop an algorithm for estimating the error distribution of 
 gaze duration measurement through Monte Carlo simulation using the content 
@@ -51,10 +54,10 @@ We provide this algorithm in an open source application
 to allow researchers to understand the error in their gaze duration measurements. 
 We use this application to conduct experiments on the expected error bounds for 
 different duration measurements across a fixed session length for a simulated 
-advertising area of interest study on a mobile device. 
+area of interest study on a mobile device. 
 The results indicate that error in gaze duration estimation is sensitive to
-fixation error beyond a bound that will depend on the size of interest and the session length.
-
+fixation error beyond a bound that will depend on the size of the area of interest 
+and the comparative length of the viewing session.
 
 \section{Introduction}
 
@@ -76,16 +79,17 @@ and the relationship with social media posts \cite{Barreto2013}.
 Increasingly, eye tracking applications are built using devices that employ 
 machine learning models trained to predict fixation locations from a camera image.
 While this approach to eye tracking may suffer in terms of accuracy, it can
-open up possibilities to researchers that head position restricting devices prevent
-\cite{Valtakari2021}.
+open up possibilities for researchers in terms of reduced cost and increased scale
+of experiments. As well as facilitating studies that head position restricting 
+devices prevent\cite{Valtakari2021}.
 
 Gaze fixation models will typically have an error profile that is dependent on both 
 the nature of the media being presented, the variety of faces and lighting conditions 
 in the training data. In addition, it has been observed that the error profile varies 
-depending on the location of the true fixation point within the subjects field of view.
+depending on the location of the true fixation point within the subject's field of view.
 The errors in fixation point measurement for a given eye tracking solution are routinely
 monitored and adjusted through a process called calibration, in which users are presented
-a series or \it{required fixation locations} (RFL) which are compared with measured 
+a series or \emph{required fixation locations} (RFL) which are compared with measured 
 points of fixation\cite{Hornof2002}. 
 Improvements in the callibration process
 are an ongoing focus for the development of algorithms\cite{Zhang2014,Hassoumi2019} 
@@ -94,11 +98,13 @@ such as whether to use fixation data from individual eyes, or a composite
 signal\cite{Hooge2019}.
 
 Typically the nature of the error detected in the calibration process can be broken
-into both accuracy and precisions. Wherein accuracy is the tendency for the measure
+into both accuracy and precision. Wherein accuracy is the tendency for the measure
 fixation points to be closer to true fixation, and precision is the tendency for the
 measured locations to vary for a given true fixation\cite{Holmqvist2022}. This distinction
 is critical because it forms the basis of methods that can correct for the kind of 
-systematic bias observed with low precision eye tracking.
+systematic bias observed with low precision eye tracking. It also been observed that
+metrics of the precision in these models vary in the way they rank technologies\cite{Niehorster2020}. We can conclude from this that the patterns of systematic error in eye tracking
+data are more complicated that can be quanitifed by a single metric.
 
 When fixation models are used sequentially for the purpose of estimating gaze duration
 (as is commonly done in point of salience or advertising media studies), 
@@ -107,7 +113,7 @@ to either cancel out (reducing error in gaze duration estimation) or to compound
 (increasing error in gaze duration). Which of these outcomes occurs will depend on the
 specifics of the model and the conditions under which it is being used.
 Influencing factors include the ratio of measured gaze duration to the total viewing time
-and the error profile of the machine learning fixation coordinate model.
+and the error profile of the gaze fixation technology.
 
 The errors of eye tracking data technology can be decomposed into a range of
 independent sources that researchers need to consider \cite{Holmqvist2012}.
