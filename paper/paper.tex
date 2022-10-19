@@ -83,10 +83,12 @@ open up possibilities for researchers in terms of reduced cost and increased sca
 of experiments. As well as facilitating studies that head position restricting 
 devices prevent\cite{Valtakari2021}.
 
-Gaze fixation models will typically have an error profile that is dependent on both 
-the nature of the media being presented, the variety of faces and lighting conditions 
-in the training data. In addition, it has been observed that the error profile varies 
-depending on the location of the true fixation point within the subject's field of view.
+The source of errors in eye tracking technology can be decomposed into a range of
+independent sources that researchers need to consider\cite{Holmqvist2012}.
+Unless they are properly addressed these sources of error can manifest themselves
+as systematic biases across undesirable dimensions such as the age\cite{Dalrymple2018}
+or ethnicity of subjects\cite{Blignaut2013}. Machine learning based eye tracking solutions
+can be impacted by the variety of faces and lighting conditions in the training data. 
 The errors in fixation point measurement for a given eye tracking solution are routinely
 monitored and adjusted through a process called calibration, in which users are presented
 a series or \emph{required fixation locations} (RFL) which are compared with measured 
@@ -97,14 +99,17 @@ and software tools\cite{ETCAL2018}. In some scenarios there are additional consi
 such as whether to use fixation data from individual eyes, or a composite 
 signal\cite{Hooge2019}.
 
-Typically the nature of the error detected in the calibration process can be broken
-into both accuracy and precision. Wherein accuracy is the tendency for the measure
-fixation points to be closer to true fixation, and precision is the tendency for the
-measured locations to vary for a given true fixation\cite{Holmqvist2022}. This distinction
+In eye tracking literature the error detected in the calibration process is classified
+using two independent metrics; accuracy and precision. Accuracy is a measure for how
+close, on average, the fixation points are to the true point of fixation.
+Precision is the tendency for the measured locations to vary between subsequent measurements
+for a given point of fixation\cite{Holmqvist2022}. This distinction
 is critical because it forms the basis of methods that can correct for the kind of 
 systematic bias observed with low precision eye tracking. It also been observed that
-metrics of the precision in these models vary in the way they rank technologies\cite{Niehorster2020}. We can conclude from this that the patterns of systematic error in eye tracking
-data are more complicated that can be quanitifed by a single metric.
+metrics of the precision in these models vary in the way they rank 
+technologies\cite{Niehorster2020}. We can conclude from this that the patterns of 
+systematic error in eye tracking
+data are more complicated that can be quantifed by a single metric.
 
 When fixation models are used sequentially for the purpose of estimating gaze duration
 (as is commonly done in point of salience or advertising media studies), 
@@ -112,14 +117,8 @@ then there is the potential for the error
 to either cancel out (reducing error in gaze duration estimation) or to compound
 (increasing error in gaze duration). Which of these outcomes occurs will depend on the
 specifics of the model and the conditions under which it is being used.
-Influencing factors include the ratio of measured gaze duration to the total viewing time
-and the error profile of the gaze fixation technology.
-
-The errors of eye tracking data technology can be decomposed into a range of
-independent sources that researchers need to consider \cite{Holmqvist2012}.
-Unless they are properly addressed these sources of error can manifest themselves
-as systematic biases across undesirable dimensions such as the age\cite{Dalrymple2018}
-or ethnicity of subjects\cite{Blignaut2013}. 
+Influencing factors include the ratio of measured gaze duration to the 
+total viewing time and the error profile of the gaze fixation technology.
 
 The use of eye fixation models to estimate gaze duration (or dwell time) in Area of
 Interest studies (AOI) was discussed by Holmqvist et al. \cite{Holmqvist2012}. The
@@ -130,7 +129,6 @@ calibration data as a source of noise distribution that is specific to both the
 study participants and the device/environment of the study. The result is an open
 source application that may be used by a wide variety of reserachers to provide
 error bounds on any gaze duration measurements.
-
 
 \section{Methodology}
 
@@ -164,13 +162,17 @@ We express this distribution as $P(\hat{d}|d,l,s)$. The
 procedure for making this estimation involves iteratively generating random samples
 of gaze fixation paths $\mathcal{F}$ consistent with the parameters $d$, $s$ and $l$. 
 For each point $f$ in $\mathcal{F}$ we determine a measurement point $\hat{f}$ 
-by drawing samples from the eye tracking calibration set. 
-The samples from the calibration data are used to determine the $\delta_x$ and $\delta_y$ 
-error in the measurement of gaze fixation point $f$. 
+by drawing samples from the eye tracking calibration set.
+ 
+The samples from the calibration data are drawn as a delta in the two dimensional Cartesian
+space of the field of view. Each delta consists of $\delta_x$ and $\delta_y$ which correspond
+to the error in the $x$ and $y$ dimensions. We apply these delta values to the true gaze 
+fixation point $f$ to create the simulated measurement $\hat{f}$.
 We draw these delta values from the calibration file such the
-the probability of the point being chosen is propotional to its distance from the point $f$
-in the generated path. The complete algorithm
-for estimating $P(\hat{d}|d,l,s)$ is shown in Algorithm \ref{alg:p_of_dhat}    
+the probability of choosing a delta is propotional to the distance between the point $f$
+in the generated path, and the true fixation point in the callibration set. 
+
+The complete algorithm for estimating $P(\hat{d}|d,l,s)$ is shown in Algorithm \ref{alg:p_of_dhat}    
 
 \begin{algorithm}
 \caption{Estimation of $P(\hat{d}|d,l,s)$}\label{alg:p_of_dhat}
@@ -206,16 +208,18 @@ Repeated application of this process for a given value of $d$ produces multiple 
 for that true gaze duration. Repeating the process over different 
 values of $d$ allows us to populate a two dimensional array where the first dimension is the
 true duration and the second the estimated duration. Note that our probability distribution is discrete
-because we restrict ourselves to sampling over a fixed set of increments 
+because we restrict ourselves to sampling over a set of fixed time period increments ($i$) 
 between zero and the session length.
 
 \subsection{Gaze Duration Distribution}
 
 In real world applications we will have the true session length but rely on the model for the 
 estimate of gaze duration. Meaning that the probability distribution we want is the distribution 
-over true gaze durations for a given measurement, rather than the inverse which is what we 
-have produced in the previous section. We produce an estimate of $P(d|\hat{d},l,s)$
-through an application of Bayes' rule, as shown in Equation \ref{eq:p_of_d}.
+over true gaze durations for a given measurement. In the previous section we estimated the inverse of
+this: the distribution of measurements of a given true duration. 
+
+In order to estimate the desired distribution $P(d|\hat{d},l,s)$ we need to use 
+Bayes' rule, as shown in Equation \ref{eq:p_of_d}.
 
 \begin{equation}
 \label{eq:p_of_d}
@@ -225,9 +229,8 @@ P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ P(\hat{d},l,s)  }
 We use a uniform prior for $P(d)$, meaning in the absence of additional information all
 gaze durations less than the session length are equally likely. As our distributions are
 discrete estimations of an underlying continuous distribution the value of $P(d)$ is
-equal to $1/(1+floor(10*s))$
- We can estimate the value
-of the denominator $P(\hat{d},l,s)$ by iterating over all values of d and summing the product
+equal to $1/(1+floor(i*s))$. We can estimate the value
+of the denominator $P(\hat{d},l,s)$ by iterating over all values of $d$ and summing the product
 of $ P(\hat{d},l,s|d) \dot P(d)$. This fully explicated form is shown in 
 Equation \ref{eq:p_of_d_full}.
 
@@ -255,12 +258,13 @@ and expected real duration under a variety of changing scenarios. These scenario
 in the underlying error indicated by the eye tracking calibration file and length of the session
 in which the user could be looking at the area of interest.
 
-For the sake of our simulations we use a fixed sized simulated device with viewport pixel 
+For the sake of our simulations we use a simulated device with viewport pixel 
 dimensions of 350 by 627. Our area of interest (AOI) is a fixed position medium rectangle ad unit (MREC)
 that is located toward the top of the screen. We iterate over a range of potential mean error
-values (determined to be the mean Euclidean distance between the measured fixation and actual fixation).
+values (equivalent to varying the accuracy), determined to by the mean Euclidean distance 
+between the measured fixation point and actual fixation points.
 For each of these mean error values we generate a synthetic eye tracking calibration file. We produce
-two versions of this calibration data, one in which the error is distributed around the true target,
+two versions of this calibration data, one in which the error is centered around the true target,
 and a second biased version in which the error tends toward the upper left of the true position. We 
 include the biased calibration data as it is consistent with our observations of real eye tracking data
 and we explore the extent to which this bias affects gaze duration measurements.
@@ -325,23 +329,24 @@ in Figure \ref{fig:error_surface}
 \end{figure}
 
 The left hand plot shows the complete error surface in which you will observe large spikes in
-error in the corner correspinding to high MAE for the fixation models and high measurements of
-gaze duration. This effect is caused by a complete absence of probability density in these
+error in the corner corresponding to both high mean error for the fixation models and 
+high measurements of gaze duration. 
+This effect is caused by a complete absence of probability density in these
 regions, meaning that the error is maximal because the expected value is zero. This effect 
-was consistenlt observed for 
-eye tracking models with high fixation error and when the measured duration was high. Meaning
-that our model estimates that when fixation error is this high, measurements of these values
+was consistently observed for 
+eye tracking models with high mean fixation error and when the measured duration was high. 
+The consequence of this is that our model estimates that when fixation error is this high, 
+measurements of these values
 become extremely unlikley to be observed.
 
 We added the right hand plot in Figure \ref{fig:error_surface} to illustrate the error surface
-in the absence of these deceptive outliers. We see that in general the expected error in a gaze
-duration is maximal around the mid point of the measurement range. The effect is lessened by 
-lower MAE in the fixation models, but remains consistent for all levels of fixation error.
-
+in the absence of these deceptive outliers. We see that, in general, the expected error in a gaze
+duration measurement is maximal around the mid point of the measurement range. The effect is lessened by 
+lower mean error in the fixation models, but remains consistent for all levels of fixation error.
 
 \section{Conclusion}
 
-We have demonstrated that the statistial information contained in eye tracking validation
+We have demonstrated that the statistial information contained in eye tracking calibration
 data can be utilised for estimating errors in gaze duration estimation. The process involves
 simulating the distribution of measured duration for each possible true duration, 
 and then inverting it with Bayes rule into a distribution over true duration for a given measurement.
@@ -354,11 +359,10 @@ the relationship between expected error and saw that observed tendency toward sm
 measurements (estimated with an psuedo-exponential distribution) delivers a slower growing
 expected duration error with the mean error in fixation points.
 
-Finally, our simualtions revealed that for large error in fixation points certain measurements
-become so unlikely that our monte carlo simualtions placed none of the probability density
+Finally, our simulations revealed that for large error in fixation points, certain measurements
+become so unlikely that our Monte Carlo simualtions placed none of the probability density
 in those regions. This strongly suggests that an additional downside to large fixation point error
 is a reduced range of measurement for area of interest studies.
-
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
