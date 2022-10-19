@@ -14,12 +14,14 @@ device_height = 667
 
 N = 1500
 
-def add_noise(x,y,maerr, bias=False):
+def add_noise(x,y,maerr, bias=False, precise=False):
     factor = 1.85
     part = math.sqrt(math.pow(maerr,2)/2)
     x_err = random.uniform(-part*factor,part*factor)
     y_err = random.uniform(-part*factor,part*factor)
     if bias:
+        if precise:
+            y_err = x_err + random.uniform(-0.35*x_err, 0.35*x_err)
         x_err = -abs(x_err)
         y_err = -abs(y_err)
     return x+x_err,y+y_err
@@ -33,8 +35,10 @@ def euclidean(row):
 for mae in maes:
     results = pd.DataFrame(columns=header)
     results2 = pd.DataFrame(columns=header)
-    filename = "data/validation_%s_MAE.csv"%str(mae)
-    filename2 = "data/validation_%s_MAE_Biased.csv"%str(mae)
+    results3 = pd.DataFrame(columns=header)
+    filename = "data/validation_%s_MErr.csv"%str(mae)
+    filename2 = "data/validation_%s_MErr_Biased.csv"%str(mae)
+    filename2 = "data/validation_%s_MErr_Biased_Precise.csv"%str(mae)
     for n in range(N):
         my_x = random.randrange(0, device_width, 20)
         my_y = random.randrange(0, device_height, 20)
@@ -54,11 +58,24 @@ for mae in maes:
               "gaze_y":gaze_y
            }, ignore_index=True
         )
+        gaze_x, gaze_y = add_noise(my_x,my_y,mae,bias=True,True)
+        results3 = results3.append({
+              "target_x":my_x,
+              "target_y":my_y,
+              "gaze_x":gaze_x,
+              "gaze_y":gaze_y
+           }, ignore_index=True
+        )
     results.to_csv(filename, index=False,header=True)
     results2.to_csv(filename2, index=False,header=True)
-    results2['error'] = results.apply(euclidean, axis=1)
-    print("Expected MAE: ", mae)
-    print("Simulated MAE: ", results2['error'].mean())
+    results3.to_csv(filename3, index=False,header=True)
+    results['error'] = results.apply(euclidean, axis=1)
+    results2['error'] = results2.apply(euclidean, axis=1)
+    results3['error'] = results3.apply(euclidean, axis=1)
+    print("Expected Error: ", mae)
+    print("Unbiased Data: ", results['error'].mean())
+    print("Biased Data: ", results2['error'].mean())
+    print("Biased Precise Data: ", results3['error'].mean())
 
 
 
