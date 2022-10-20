@@ -247,60 +247,73 @@ It can be used as a software library, exposing functions for calculating the pro
 or it can deployed as a command line application. 
 The source code is available on GitHub and the python package can be installed from PyPi.
 
-The source repository for the gazerr application also contains a series of scripts for generating data
-sets and running the experiments outlined in the next section. Full details available in the package
-README file.
+The source repository for the \textit{gazerr} application also contains a series of 
+scripts for generating data sets and running the experiments outlined in the next 
+section. Full details available in the package \textit{README} file.
 
 \subsection{Experiments}
 
-We apply the gazerr application to investigate the relationship between measured gaze duration
-and expected real duration under a variety of changing scenarios. These scenarios are variations
-in the underlying error indicated by the eye tracking calibration file and length of the session
-in which the user could be looking at the area of interest.
+We apply the \textit{gazerr} application to investigate the relationship between 
+measured gaze duration and expected true duration under a variety of changing scenarios. 
+These scenarios are variations in the underlying error indicated by the eye tracking 
+calibration file and length of the session in which the user could be looking at 
+the area of interest.
 
-For the sake of our simulations we use a simulated device with viewport pixel 
-dimensions of 350 by 627. Our area of interest (AOI) is a fixed position medium rectangle ad unit (MREC)
-that is located toward the top of the screen. We iterate over a range of potential mean error
-values (equivalent to varying the accuracy), determined to by the mean Euclidean distance 
+For the sake of our experiments we use a simulated device with viewport pixel 
+dimensions of 350 by 627. Our area of interest (AOI) is a fixed position medium 
+rectangle ad unit (MREC) that is located toward the top of the screen. 
+We iterate over a range of potential mean error values 
+(equivalent to varying the accuracy), determined to by the mean Euclidean distance 
 between the measured fixation point and actual fixation points.
-For each of these mean error values we generate a synthetic eye tracking calibration file. We produce
-two versions of this calibration data, one in which the error is centered around the true target,
-and a second biased version in which the error tends toward the upper left of the true position. We 
-include the biased calibration data as it is consistent with our observations of real eye tracking data
-and we explore the extent to which this bias affects gaze duration measurements.
+For each of these mean error values we generate a synthetic eye tracking calibration 
+file. We produce three versions of this calibration data, one in which the error 
+is centered around the true target, a second biased version in which the error tends 
+toward the upper left of the true position. In the third version the error is again
+biased toward the upper left corner of the screen, but it has higher precision, 
+meaning that the measurements will cluster closely together with each other around
+the mean error position.
 
-We feed each of these synthetic calibration files into gazerr to calculate posterior probability
-distributions over true gaze duration for the set of measured gaze durations. These posterior
-distributions are converted into expected values of true gaze duration for each measured duration.
-We repeat the above process for multiple session lengths to investigate the impact of increasing
-session length on the expected gaze duration for a fixed set of measurements.
+We include these biased calibration dataset as they are consistent with both our 
+observations of real eye tracking data and what is found in the literature\cite{}.
+We use this synthetic data creation in order to explore the extent to which different
+patterns in error, bias and precision affects gaze duration measurements.
+
+We feed each of these synthetic calibration files into the \textit{gazerr} application
+to calculate the posterior probability distributions over true gaze duration for 
+the set of measured gaze durations. These posterior distributions are converted 
+into expected values of true gaze duration for each measured duration.
+
+In these experiments we use both a fixed session length and fixed area of interest
+size and position, so that we can focus specifically on the impacts of mean
+error, bias and precision on the quality of gaze duration measurment.
 
 \section{Results}
 
 The first experimental result is the expected true duration against the measured duration
-for a single eye tracking application with a mean fixation error of 50 pixels. These
+for a single eye tracking application with a mean fixation error of 70 pixels. These
 results are shown in Figure \ref{fig:measured_vs_expected}.
 
 \begin{figure}[h!]
 \includegraphics[scale=0.5]{../results/Measured_vs_expected.png}
-\caption{Measured versus expected gaze duration. MREC in 10s Session with 50px Mean Error.}
+\caption{Measured Versus Expected Gaze Duration. \\\hspace{\textwidth} 
+MREC ad appearing on screen for 1s with 50px Mean Error in Fixation}
 \label{fig:measured_vs_expected}
 \end{figure}
 
 The result shown in Figure \ref{fig:measured_vs_expected} is indicative of what we see under
 multiple variations of the simulation configuration. At lower meaurement values there is a 
-tendency for the measurement to be an accurate estimation, while at higher values it tends
-toward an under-estimation of the true gaze duration. Surprisingly the results using the
-biased calibration data seem to mitigate this effect somewhat, but the overall pattern 
-remains consistent.
+tendency for the measurement to be an accurate estimation of true gaze duraiton, while 
+at higher values it tends toward an under-estimation of the true gaze duration. 
+Surprisingly the results using the biased calibration data seem to mitigate this effect 
+somewhat, but the overall pattern remains consistent.
 
-We next examined the way that exected error in the gaze duration estimate tracks with expected 
-error in the gaze fixation points. This involved calculating the mean absolute error in gaze
-duration for each of the mean fixation error validation files. We performed this calculation
-using two methods. The first method, called uniform, assumes that all measured values are 
-equally likely. The second method, called smoothed, assumes that low measurements are much
-more likely than higher measurement, and that this drop in likelihood follows an approximately
-exponential distribution.
+We next examined the way that exected error in the gaze duration estimate tracks with 
+expected error in the gaze fixation points. This involved calculating the mean absolute
+error in gaze duration for each of the mean fixation error validation files. 
+We performed this calculation using two methods. The first method, labelled uniform, 
+assumes that all measured values are equally likely. The second method, labelled exponential,
+assumes that low measurements are much more likely than higher measurement, and that 
+this drop in likelihood follows an approximately exponential distribution.
 
 \begin{figure}[h!]
 \centering
@@ -310,11 +323,13 @@ exponential distribution.
 \end{figure}
 
 As shown in Figure \ref{fig:fixation_vs_duration} we see that the error in gaze duration
-grows with error in fixation points, as would be expected. However, when we use the exponential
-weighting to calculate the expected error in duration the gaze duration error grows much slower
-than in the uniform case. This suggests that the observed tendency toward smaller measurements
-in area of interest studies means lower expected error overall. This pattern is true for the 
-centrally distributed error (A) as well as the biased calibration error (B).
+grows with error in fixation points, as would be expected. However, when we use the 
+exponential weighting to calculate the expected error in duration the gaze duration 
+error grows much slower than in the uniform case. This suggests that the observed 
+tendency toward smaller measurements in advertising area of interest studies means 
+lower expected error overall. This pattern is true for the centrally distributed 
+error (A) as well as the biased calibration error (B) and precise biased calibration
+error (C) scenarios.
 
 In our final experiment we look at the effect of both the size of the measured 
 gaze duration and the mean error of fixation on the expected error in gaze duration.
@@ -328,7 +343,8 @@ in Figure \ref{fig:error_surface}
 \label{fig:error_surface}
 \end{figure}
 
-The left hand plot shows the complete error surface in which you will observe large spikes in
+The left hand plot shows the complete error surface in which you will observe large 
+spikes in
 error in the corner corresponding to both high mean error for the fixation models and 
 high measurements of gaze duration. 
 This effect is caused by a complete absence of probability density in these
