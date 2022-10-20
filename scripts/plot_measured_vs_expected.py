@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -8,6 +9,10 @@ file3 = "results/MREC_MErr_Biased_Precise_70/expected_values.csv"
 df = pd.read_csv(file)
 df2 = pd.read_csv(file2)
 df3 = pd.read_csv(file3)
+
+df['Expected'] = df['Expected'].replace({'0':np.nan, 0:np.nan})
+df2['Expected'] = df2['Expected'].replace({'0':np.nan, 0:np.nan})
+df3['Expected'] = df3['Expected'].replace({'0':np.nan, 0:np.nan})
 
 measured = df['Measured']
 expected = df['Expected']
@@ -26,8 +31,8 @@ ax.plot(measured3, expected3, c='darkorchid', label="Precise Biased Fixation Err
 p1 = max(max(measured), max(expected))
 p2 = min(min(measured), min(expected))
 ax.plot([p1, p2], [p1, p2], c='lightsteelblue', linestyle='dotted', label='Ideal' )
-ax.set_xlabel('Measured Gaze Duration', fontsize=15)
-ax.set_ylabel('Expected Gaze Duration', fontsize=15)
+ax.set_xlabel('Measured Gaze Duration (ms)', fontsize=15)
+ax.set_ylabel('Expected Gaze Duration (ms)', fontsize=15)
 ax.legend( prop={'size': 15} )
 
 plt.savefig("results/Measured_vs_expected.png")
