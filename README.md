@@ -31,8 +31,8 @@ To use the application without installing it you can employ the runner script.
 Example below, using the supplied calibration data:
 
 ```
-mkdir results/MREC_MAE_50
-python ./gazerr-runner.py data/validation_50_MAE.csv 400 1000 40,40 340,290 results/MREC_MAE_50
+mkdir results/MREC_MErr_50
+python ./gazerr-runner.py data/validation_50_MErr.csv 400 1000 40,40 340,290 results/MREC_MErr_50
 ```
 
 Alternatively, you may inspect the code and use the library functions directly
@@ -51,6 +51,7 @@ Then execute the gazerr exeriments with the following two commands:
 ```
 scripts/RUN_EXPERIMENTS.sh
 scripts/RUN_BIAS_EXPERIMENTS.sh
+scripts/RUN_PRECISE_BIAS_EXPERIMENTS.sh
 ```
 
 Finally, analyse the results and generate the plots with

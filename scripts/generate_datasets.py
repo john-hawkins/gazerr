@@ -21,7 +21,7 @@ def add_noise(x,y,maerr, bias=False, precise=False):
     y_err = random.uniform(-part*factor,part*factor)
     if bias:
         if precise:
-            y_err = x_err + random.uniform(-0.35*x_err, 0.35*x_err)
+            y_err = x_err + random.uniform(0, 0.3*x_err)
         x_err = -abs(x_err)
         y_err = -abs(y_err)
     return x+x_err,y+y_err
@@ -38,7 +38,7 @@ for mae in maes:
     results3 = pd.DataFrame(columns=header)
     filename = "data/validation_%s_MErr.csv"%str(mae)
     filename2 = "data/validation_%s_MErr_Biased.csv"%str(mae)
-    filename2 = "data/validation_%s_MErr_Biased_Precise.csv"%str(mae)
+    filename3 = "data/validation_%s_MErr_Biased_Precise.csv"%str(mae)
     for n in range(N):
         my_x = random.randrange(0, device_width, 20)
         my_y = random.randrange(0, device_height, 20)
@@ -58,7 +58,7 @@ for mae in maes:
               "gaze_y":gaze_y
            }, ignore_index=True
         )
-        gaze_x, gaze_y = add_noise(my_x,my_y,mae,bias=True,True)
+        gaze_x, gaze_y = add_noise(my_x,my_y,mae,bias=True,precise=True)
         results3 = results3.append({
               "target_x":my_x,
               "target_y":my_y,

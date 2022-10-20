@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# NOTE: This script depends on the output of RUN_EXPERIMENTS.sh
+# NOTE: This script depends on the outputs of the folling scripts:
+# RUN_EXPERIMENTS.sh
+# RUN_BIAS_EXPERIMENTS.sh
+# RUN_PRECISE_BIAS_EXPERIMENTS.sh
+#
 
 # Generate the Measured Versus Expected Plot
 python scripts/plot_measured_vs_expected.py
