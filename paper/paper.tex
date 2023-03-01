@@ -141,7 +141,7 @@ of expected gaze duration on a specifc area of interest, for a given measurement
 
 The algorithm consists of two core steps, first estimating the distrubtion of measurements
 for a given true duration. Secondly, inverting this into the distribution of true
-gaze durtions for a given measurement. Note, that the algorithm requires that the area of
+gaze durations for a given measurement. Note, that the algorithm requires that the area of
 interest be defined as a fixed bounding box and that the distributions are estimated for
 a fixed session length. This session length is the total period of time that the area of
 interest was in a subject's field of view, and thus represents the maximum possible gaze
@@ -200,16 +200,21 @@ of the gaze target and the viewing session length. It then
 generates a random path of fixation points that is compatible with those parameters.
 The second function 
 $generateMeasurement(p,l,C)$, takes the path, target location and the eye tracking calibration 
-data and produces a sample of measured attention time. It does this by using the calibration data to sample
-fixation errors and apply them to the path data. The noisy path data is then used to determine
+data and produces a sample of measured attention time.
+This is achieved by using the calibration data to sample
+fixation errors in the proximity of each location within the path and applying them to the path data. 
+The noisy path data is then used to determine
 the estimated gaze duration by looking at the number of fixation points that intersect with the target
 location.
 Repeated application of this process for a given value of $d$ produces multiple samples of $\hat{d}$
 for that true gaze duration. Repeating the process over different 
 values of $d$ allows us to populate a two dimensional array where the first dimension is the
-true duration and the second the estimated duration. Note that our probability distribution is discrete
+true duration and the second the estimated duration. 
+
+Note that our probability distribution is discrete
 because we restrict ourselves to sampling over a set of fixed time period increments ($i$) 
-between zero and the session length.
+between zero and the session length. This restriction is realistic for most machine learning
+eye tracking systems as they output fixation points at fixed intervals of time.
 
 \subsection{Gaze Duration Distribution}
 
@@ -245,11 +250,13 @@ The algorithm described in the preceding sections has been implemented as an ope
 package called \textit{gazerr}. 
 It can be used as a software library, exposing functions for calculating the probability densities,
 or it can deployed as a command line application. 
-The source code is available on GitHub and the python package can be installed from PyPi.
+The source code is available on GitHub\footnote{https://github.com/playground-xyz/gazerr}
+and the python package can be installed from PyPi.\footnote{https://pypi.org/project/gazerr/}
 
 The source repository for the \textit{gazerr} application also contains a series of 
 scripts for generating data sets and running the experiments outlined in the next 
-section. Full details available in the package \textit{README} file.
+section. Full details for the data generation process are available in the 
+source code README file.
 
 \section{Experiments}
 
@@ -274,7 +281,7 @@ meaning that the measurements will cluster closely together with each other arou
 the mean error position.
 
 We include these biased calibration datasets as they are consistent with both our 
-observations of real eye tracking data and what is found in the literature\cite{}.
+observations of real eye tracking data and what is found in the literature\cite{Holmqvist2022}.
 We use this synthetic data creation in order to explore the extent to which different
 patterns in error, bias and precision affects gaze duration measurements.
 
