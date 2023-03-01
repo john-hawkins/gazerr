@@ -251,11 +251,11 @@ The source repository for the \textit{gazerr} application also contains a series
 scripts for generating data sets and running the experiments outlined in the next 
 section. Full details available in the package \textit{README} file.
 
-\subsection{Experiments}
+\section{Experiments}
 
 We apply the \textit{gazerr} application to investigate the relationship between 
-measured gaze duration and expected true duration under a variety of changing scenarios. 
-These scenarios are variations in the underlying error indicated by the eye tracking 
+measured gaze duration and expected true duration under a variety of scenarios. 
+Each scenario involves a variation in the underlying error indicated by the eye tracking 
 calibration file and length of the session in which the user could be looking at 
 the area of interest.
 
@@ -273,7 +273,7 @@ biased toward the upper left corner of the screen, but it has higher precision,
 meaning that the measurements will cluster closely together with each other around
 the mean error position.
 
-We include these biased calibration dataset as they are consistent with both our 
+We include these biased calibration datasets as they are consistent with both our 
 observations of real eye tracking data and what is found in the literature\cite{}.
 We use this synthetic data creation in order to explore the extent to which different
 patterns in error, bias and precision affects gaze duration measurements.
@@ -295,17 +295,20 @@ results are shown in Figure \ref{fig:measured_vs_expected}.
 
 \begin{figure}[h!]
 \includegraphics[scale=0.5]{../results/Measured_vs_expected.png}
-\caption{Measured Versus Expected Gaze Duration. \\\hspace{\textwidth} 
-MREC ad appearing on screen for 1s with 50px Mean Error in Fixation}
+\caption{Measured Gaze Duration Versus Expected Gaze Duration. \\\hspace{\textwidth} 
+MREC ad appearing on screen for 1s with 70px Mean Error in Fixation}
 \label{fig:measured_vs_expected}
 \end{figure}
 
-The result shown in Figure \ref{fig:measured_vs_expected} is indicative of what we see under
-multiple variations of the simulation configuration. At lower meaurement values there is a 
-tendency for the measurement to be an accurate estimation of true gaze duraiton, while 
-at higher values it tends toward an under-estimation of the true gaze duration. 
-Surprisingly the results using the biased calibration data seem to mitigate this effect 
-somewhat, but the overall pattern remains consistent.
+The result shown in Figure \ref{fig:measured_vs_expected} is indicative of what we 
+see under multiple variations of the simulation configuration. 
+At lower meaurement values there is a tendency for the measurement to be an 
+accurate estimation of true gaze duration, while 
+at higher values it tends toward an under-estimation of the true gaze duration.
+This problem is worse for the model with the biased error, but it is mitigated
+when the biased error comes from a model with higher precision. This is potentially
+due to the fact that the high prescion scenario has lower tendency for gaze to be 
+pushed off screen.  
 
 We next examined the way that exected error in the gaze duration estimate tracks with 
 expected error in the gaze fixation points. This involved calculating the mean absolute
@@ -331,10 +334,18 @@ lower expected error overall. This pattern is true for the centrally distributed
 error (A) as well as the biased calibration error (B) and precise biased calibration
 error (C) scenarios.
 
+In addition, the additional error in gaze duration we see when the error is biased
+in a particular direction (shown in B) is partly mitigated by a fixation model that
+is more precise (shown in C). This suggests that a precise fixation sampling process
+is able to partly overcome the false positive and false negatives of an error prone gaze
+fixation model.
+
 In our final experiment we look at the effect of both the size of the measured 
 gaze duration and the mean error of fixation on the expected error in gaze duration.
-We display this as a three dimensional expected error surface over these two key dimensions
-in Figure \ref{fig:error_surface}
+We conduct this experiment using only the unbiased synthetic data in order to understand
+how error centred on true fixation points relates to error in gaze duration across the
+range of measurement. We display these results as a three dimensional expected error 
+surface over these two key dimensions in Figure \ref{fig:error_surface}
 
 \begin{figure}[h!]
 \centering
@@ -365,19 +376,25 @@ lower mean error in the fixation models, but remains consistent for all levels o
 We have demonstrated that the statistial information contained in eye tracking calibration
 data can be utilised for estimating errors in gaze duration estimation. The process involves
 simulating the distribution of measured duration for each possible true duration, 
-and then inverting it with Bayes rule into a distribution over true duration for a given measurement.
+and then inverting it with Bayes rule into a distribution over true duration for a 
+given measurement.
 
-We have released this approach as the open source application \textit{gazerr} and used it to explore
-the relationship between fixation error and duration error. Our results show that the nature
-of the error in gaze duration depends on the size of the measurement. Smaller measurements
-tend to have lower expected error while larger measurements tend toward under prediction. We plotted
-the relationship between expected error and saw that observed tendency toward smaller duration
-measurements (estimated with an psuedo-exponential distribution) delivers a slower growing
+We have released this approach as the open source application \textit{gazerr} and 
+used it to explore the relationship between fixation error and duration error, under
+range of realistic error profiles when looking at measuring attention on a standard
+size ad within a mobile screen. Our results show that the nature
+of the error in gaze duration tends to depend on the size of the measurement. 
+Smaller measurements tend to have lower expected error while larger measurements 
+tend toward under prediction. 
+We plotted the relationship between expected error and saw that the observed 
+tendency toward smaller duration measurements 
+(estimated with an psuedo-exponential distribution) delivers a slower growing
 expected duration error with the mean error in fixation points.
 
-Finally, our simulations revealed that for large error in fixation points, certain measurements
-become so unlikely that our Monte Carlo simualtions placed none of the probability density
-in those regions. This strongly suggests that an additional downside to large fixation point error
+Finally, our simulations revealed that for large error in fixation points, 
+certain measurements become so unlikely that our Monte Carlo simulations placed 
+none of the probability density in those regions. 
+This strongly suggests that an additional downside to large fixation point error
 is a reduced range of measurement for area of interest studies.
 
 \bibliographystyle{IEEEtran}

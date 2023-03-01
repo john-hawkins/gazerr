@@ -53,7 +53,7 @@ for err in errors:
     gaze_err3_uni.append(df3['err_uni'].sum())
     gaze_err3_exp.append(df3['err_exp'].sum()) 
 
-fig = plt.figure(figsize=(22,8))
+fig = plt.figure(figsize=(18,8))
 #fig = plt.figure(figsize=plt.figaspect(0.5))
 
 # =============
@@ -61,7 +61,7 @@ fig = plt.figure(figsize=(22,8))
 # =============
 # set up the axes for the first plot
 ax = fig.add_subplot(1, 3, 1)
-ax.set_title('A) Expected Error - Gaze Fixation Vs Duration')
+ax.set_title('A) Gaze Fixation Vs Duration Error')
 ax.plot(errors, gaze_err_uni, c='firebrick', label="Uniform Measurement Distribution")
 ax.plot(errors, gaze_err_exp, c='salmon', linestyle='dashed', label="Exponential Measurement Distribution")
 ax.set_xlabel('Gaze Fixation μ Error (px)', fontsize=12)
@@ -71,7 +71,7 @@ ax.set_ylim([0, 500])
 ax.legend( prop={'size': 10} )
 
 ax = fig.add_subplot(1, 3, 2)
-ax.set_title('B) Expected Error - Biased Gaze Fixation Vs Duration')
+ax.set_title('B) Biased Gaze Fixation Vs Duration Error')
 ax.plot(errors, gaze_err2_uni, c='seagreen', label="Uniform Measurement Distribution")
 ax.plot(errors, gaze_err2_exp, c='lightseagreen', linestyle='dashed', label="Exponential Measurement Distribution")
 ax.set_xlabel('Gaze Fixation μ Error (px)', fontsize=12)
@@ -81,7 +81,7 @@ ax.set_ylim([0, 500])
 ax.legend( prop={'size': 10} )
 
 ax = fig.add_subplot(1, 3, 3)
-ax.set_title('C) Expected Error - Biased Precise Gaze Fixation Vs Duration')
+ax.set_title('C) Precise Biased Fixation Vs Duration Error')
 ax.plot(errors, gaze_err3_uni, c='darkorchid', label="Uniform Measurement Distribution")
 ax.plot(errors, gaze_err3_exp, c='orchid', linestyle='dashed', label="Exponential Measurement Distribution")
 ax.set_xlabel('Gaze Fixation μ Error (px)', fontsize=12)
