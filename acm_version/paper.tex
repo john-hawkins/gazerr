@@ -353,20 +353,21 @@ Bayes' rule, as shown in Equation \ref{eq:p_of_d}.
 
 \begin{equation}
 \label{eq:p_of_d}
-P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ P(\hat{d},l,s)  }
+P(d|\hat{d},l,s) =  \frac{ P(\hat{d}|l,s,d) P(d|l,s) }{ P(\hat{d}|l,s)  }
 \end{equation}
 
-We use a uniform prior for $P(d)$, meaning in the absence of additional information all
+We use a uniform prior for $P(d|l,s)$, meaning in the absence of additional information all
 gaze durations less than the session length are equally likely. As our distributions are
-discrete estimations of an underlying continuous distribution the value of $P(d)$ is
-equal to $1/(1+floor(i*s))$. We can estimate the value
-of the denominator $P(\hat{d},l,s)$ by iterating over all values of $d$ and summing the product
-of $ P(\hat{d},l,s|d) \dot P(d)$. This fully explicated form is shown in 
-Equation \ref{eq:p_of_d_full}.
+discrete estimations of an underlying continuous distribution the value of each discrete
+value in $P(d|l,s)$ is
+equal to $1/(1+floor(s/i))$. We can estimate the value
+of the denominator $P(\hat{d}|l,s)$ by iterating over all possible values of $\delta \in D$ 
+and summing the product of $P(\hat{d}|l,s,\delta)$ and $P(\delta|l,s)$. 
+This fully explicated form is shown in Equation \ref{eq:p_of_d_full}.
 
 \begin{equation}
 \label{eq:p_of_d_full}
-P(d|\hat{d},l,s) =  \frac{ P(\hat{d},l,s|d) \dot P(d) }{ \sum_{\delta \in D} P(\hat{d},l,s|\delta) \dot P(\delta)  }
+P(d|\hat{d},l,s) =  \frac{ P(\hat{d}|l,s,d) P(d|l,s) }{ \sum_{\delta \in D} P(\hat{d}|l,s,\delta) P(\delta|l,s) }
 \end{equation}
 
 \subsection{Implementation}
@@ -443,7 +444,7 @@ for a single eye tracking application with a mean fixation error of 70 pixels. T
 results are shown in Figure \ref{fig:measured_vs_expected}.
 
 \begin{figure*}[h!]
-\includegraphics[scale=0.5]{../results/Measured_vs_expected.png}
+\includegraphics[scale=0.5]{results/Measured_vs_expected.png}
 \caption{Measured Gaze Duration Versus Expected Gaze Duration. \\\hspace{\textwidth} 
 MREC ad appearing on screen for 1s with 70px Mean Error in Fixation}
 \label{fig:measured_vs_expected}
@@ -469,7 +470,7 @@ this drop in likelihood follows an approximately exponential distribution.
 
 \begin{figure*}[h!]
 \centering
-\includegraphics[scale=0.4]{../results/Fixation_vs_duration_error.png}
+\includegraphics[scale=0.4]{results/Fixation_vs_duration_error.png}
 \caption{Fixation error versus gaze duration error.}
 \label{fig:fixation_vs_duration}
 \end{figure*}
@@ -498,7 +499,7 @@ surface over these two key dimensions in Figure \ref{fig:error_surface}
 
 \begin{figure*}[h!]
 \centering
-\includegraphics[scale=0.4]{../results/Error_surface.png}
+\includegraphics[scale=0.4]{results/Error_surface.png}
 \caption{Mean gaze duration error over measured error and fixation MAE.}
 \label{fig:error_surface}
 \end{figure*}
